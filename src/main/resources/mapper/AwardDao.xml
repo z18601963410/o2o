@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.AwardDao">
+    <!--DAO层方法
+    int insertAward(Award award);
+    int deleteAward(@Param("awardIdCondition") Long awardId, @Param("shopIdCondition") Long shopId);
+    int updateAward(@Param("awardCondition") Award award, @Param("shopIdCondition") Long shopId);
+    List<Award> queryAward(@Param("awardCondition") Award award);
+    Award queryAwardById(Long awardId);
+    int queryAwardCount(@Param("awardCondition") Award award);
+    -->
+    <insert id="insertAward" useGeneratedKeys="true" keyColumn="award_id" keyProperty="awardId"
+            parameterType="com.ike.o2o.entity.Award">
+        INSERT INTO tb_award
+        (
+        award_name,
+        award_desc,
+        award_img,
+        point,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        shop_id
+        )
+        VALUE
+        (
+        #{awardName},
+        #{awardDesc},
+        #{awardImg},
+        #{point},
+        #{priority},
+        #{createTime},
+        #{lastEditTime},
+        #{enableStatus},
+        #{shopId}
+        )
+    </insert>
+    <delete id="deleteAward">
+        DELETE FROM tb_award
+        WHERE shop_id=#{shopIdCondition} AND award_id=#{awardIdCondition}
+    </delete>
+    <update id="updateAward">
+        UPDATE tb_award
+        <set>
+            <if test="awardCondition.awardName!=null">
+                award_name=#{awardCondition.awardName},
+            </if>
+            <if test="awardCondition.awardDesc!=null">
+                award_desc=#{awardCondition.awardDesc},
+            </if>
+            <if test="awardCondition.awardImg!=null">
+                award_img=#{awardCondition.awardImg},
+            </if>
+            <if test="awardCondition.point!=null">
+                point=#{awardCondition.point},
+            </if>
+            <if test="awardCondition.priority!=null">
+                priority=#{awardCondition.priority},
+            </if>
+            <if test="awardCondition.lastEditTime!=null">
+                last_edit_time=#{awardCondition.lastEditTime},
+            </if>
+            <if test="awardCondition.enableStatus!=null">
+                enable_status=#{awardCondition.enableStatus}
+            </if>
+        </set>
+        WHERE
+        award_id=#{awardCondition.awardId}
+        AND
+        shop_id=#{shopIdCondition}
+    </update>
+    <select id="queryAwardById" parameterType="Long" resultType="com.ike.o2o.entity.Award">
+        SELECT
+        award_id,
+        award_name,
+        award_desc,
+        award_img,
+        point,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        shop_id
+        FROM
+        tb_award
+        WHERE
+        award_id=#{awardId}
+    </select>
+    <select id="queryAward" resultType="com.ike.o2o.entity.Award">
+        SELECT
+        award_id,
+        award_name,
+        award_desc,
+        award_img,
+        point,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        shop_id
+        FROM
+        tb_award
+        <where>
+            <if test="awardCondition!=null and awardCondition.awardName!=null">
+                and award_name LIKE '%${awardCondition.awardName}%'
+            </if>
+            <if test="awardCondition!=null and awardCondition.enableStatus!=null">
+                and enable_status=#{awardCondition.enableStatus}
+            </if>
+            <if test="awardCondition!=null and awardCondition.shopId!=null">
+                and shop_id=#{awardCondition.shopId}
+            </if>
+        </where>
+        ORDER BY priority DESC
+        LIMIT #{rowIndex},#{pageSize}
+    </select>
+    <select id="queryAwardCount" resultType="Integer">
+        SELECT
+        count(1)
+        FROM
+        tb_award
+        <where>
+            <if test="awardCondition!=null and awardCondition.awardName!=null">
+                and award_name LIKE '%${awardCondition.awardName}%'
+            </if>
+            <if test="awardCondition!=null and awardCondition.enableStatus!=null">
+                and enable_status=#{awardCondition.enableStatus}
+            </if>
+            <if test="awardCondition!=null and awardCondition.shopId!=null">
+                and shop_id=#{awardCondition.shopId}
+            </if>
+        </where>
+    </select>
+</mapper>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.HeadLineDao">
+    <!--
+    line_id
+    line_name
+    line_link
+    line_img
+    priority
+    enable_status
+    creat_time
+    last_edit_time
+    -->
+    <insert id="insertHeadLine" parameterType="com.ike.o2o.entity.HeadLine" useGeneratedKeys="true"
+            keyProperty="lineId" keyColumn="line_id">
+        INSERT INTO tb_head_line
+        (
+        line_name,
+        line_link,
+        line_img,
+        priority,
+        enable_status,
+        creat_time,
+        last_edit_time
+        )
+        VALUES
+        (
+        #{lineName},
+        #{lineLink},
+        #{lineImg},
+        #{priority},
+        #{enableStatus},
+        #{createTime},
+        #{lastEditTime}
+        )
+    </insert>
+    <insert id="insertHeadLineList" parameterType="java.util.List">
+        INSERT INTO tb_head_line
+        (
+        line_name,
+        line_link,
+        line_img,
+        priority,
+        enable_status,
+        creat_time,
+        last_edit_time
+        )
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.lineName},
+            #{item.lineLink},
+            #{item.lineImg},
+            #{item.priority},
+            #{item.enableStatus},
+            #{item.createTime},
+            #{item.lastEditTime}
+            )
+        </foreach>
+    </insert>
+    <update id="updateHeadLine">
+        UPDATE tb_head_line
+        SET
+        <if test="headLineParam != null and headLineParam.lineLink != null">
+            line_link=#{headLineParam.lineLink},
+        </if>
+        <if test="headLineParam != null and headLineParam.lineImg != null">
+            line_img=#{headLineParam.lineImg},
+        </if>
+        <if test="headLineParam != null and headLineParam.priority != null">
+            priority=#{headLineParam.priority},
+        </if>
+        <if test="headLineParam != null and headLineParam.enableStatus != null">
+            enable_status=#{headLineParam.enableStatus},
+        </if>
+        <if test="headLineParam != null and headLineParam.createTime != null">
+            creat_time=#{headLineParam.createTime},
+        </if>
+        <if test="headLineParam != null and headLineParam.lastEditTime != null">
+            last_edit_time=#{headLineParam.lastEditTime},
+        </if>
+        <if test="headLineParam != null and headLineParam.lineName != null">
+            line_name=#{headLineParam.lineName}
+        </if>
+        WHERE
+        line_id=#{headLineParam.lineId}
+    </update>
+    <delete id="deleteHeadLine" parameterType="Long">
+      DELETE FROM
+      tb_head_line
+      WHERE
+      line_id=#{headLineId}
+    </delete>
+    <select id="selectHeadLineList" parameterType="com.ike.o2o.entity.HeadLine"
+            resultType="com.ike.o2o.entity.HeadLine">
+        SELECT
+        line_id,
+        line_name,
+        line_link,
+        line_img,
+        priority,
+        enable_status,
+        creat_time,
+        last_edit_time
+        FROM
+        tb_head_line
+        <where>
+            <if test="lineName != null"> <!-- ${lineName} -->
+                and line_name like '%${lineName}%'
+            </if>
+            <if test="enableStatus != null">
+                and enable_status=#{enableStatus}
+            </if>
+        </where>
+    </select>
+    <select id="selectHeadLineByHeadLineId" parameterType="Long" resultType="com.ike.o2o.entity.HeadLine">
+        SELECT
+        line_id,
+        line_name,
+        line_link,
+        line_img,
+        priority,
+        enable_status,
+        creat_time,
+        last_edit_time
+        FROM
+        tb_head_line
+        WHERE
+        line_id= #{headLineId}
+    </select>
+    <select id="selectHeadLineByHeadLineIdList" parameterType="java.util.List" resultType="com.ike.o2o.entity.HeadLine">
+        SELECT
+        line_id,
+        line_name,
+        line_link,
+        line_img,
+        priority,
+        enable_status,
+        creat_time,
+        last_edit_time
+        FROM
+        tb_head_line
+        WHERE
+        line_id
+        IN
+        (
+        <foreach collection="list" separator="," index="index" item="item">
+            #{item}
+        </foreach>
+        )
+    </select>
+</mapper>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.ProductDao">
+    <resultMap id="productMap" type="com.ike.o2o.entity.Product">
+        <id property="productId" column="product_id"/>
+        <result property="productName" column="product_name"/>
+        <result property="productDesc" column="product_desc"/>
+        <result property="imgAddr" column="img_addr"/>
+        <result property="normalPrice" column="normal_price"/>
+        <result property="promotionPrice" column="promotion_price"/>
+        <result property="priority" column="priority"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastEditTime" column="last_edit_time"/>
+        <result property="enableStatus" column="enable_status"/>
+        <association property="productCategory" column="product_category_id"
+                     javaType="com.ike.o2o.entity.ProductCategory">
+            <id property="productCategoryId" column="product_category_id"/>
+            <result property="productCategoryName" column="product_category_name"/>
+        </association>
+        <association property="shop" column="shop_id" javaType="com.ike.o2o.entity.Shop">
+            <id property="shopId" column="shop_id"/>
+            <result property="shopName" column="shop_name"/>
+        </association>
+        <collection property="productImgList" column="product_id" ofType="com.ike.o2o.entity.ProductImg">
+            <id property="productImgId" column="product_img_id"/>
+            <result property="imgAddr" column="product_img_img_addr"/>
+            <result property="imgDesc" column="product_img_img_desc"/>
+            <result property="priority" column="product_img_priority"/>
+            <result property="createTime" column="product_img_create_time"/>
+            <result property="productID" column="product_img_product_id"/>
+        </collection>
+    </resultMap>
+    <insert id="insertProduct" parameterType="com.ike.o2o.entity.Product" useGeneratedKeys="true" keyColumn="product_id"
+            keyProperty="productId">
+        INSERT INTO
+        tb_product
+        (
+        product_name,
+        product_desc,
+        img_addr,
+        normal_price,
+        promotion_price,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        product_category_id,
+        shop_id
+        )
+        VALUES
+        (
+        #{productName},
+        #{productDesc},
+        #{imgAddr},
+        #{normalPrice},
+        #{promotionPrice},
+        #{priority},
+        #{createTime},
+        #{lastEditTime},
+        #{enableStatus},
+        #{productCategory.productCategoryId},
+        #{shop.shopId}
+        )
+    </insert>
+    <update id="updateProduct" parameterType="com.ike.o2o.entity.Product" keyProperty="product_id"
+            useGeneratedKeys="true">
+        UPDATE tb_product
+        <set>
+
+            <if test="productParam.productDesc!=null">
+                product_desc=#{productParam.productDesc},
+            </if>
+            <if test="productParam.imgAddr!=null">
+                img_addr=#{productParam.imgAddr},
+            </if>
+            <if test="productParam.normalPrice!=null">
+                normal_price=#{productParam.normalPrice},
+            </if>
+            <if test="productParam.promotionPrice!=null">
+                promotion_price=#{productParam.promotionPrice},
+            </if>
+            <if test="productParam.priority!=null">
+                priority=#{productParam.priority},
+            </if>
+            <if test="productParam.lastEditTime!=null">
+                last_edit_time=#{productParam.lastEditTime},
+            </if>
+            <if test="productParam.enableStatus!=null">
+                enable_status=#{productParam.enableStatus},
+            </if>
+            <if test="productParam.productCategory!=null">
+                product_category_id=#{productParam.productCategory.productCategoryId},
+            </if>
+            <if test="productParam.shop!=null">
+                shop_id=#{productParam.shop.shopId},
+            </if>
+            <if test="productParam.productName!=null">
+                product_name=#{productParam.productName}
+            </if>
+        </set>
+        WHERE
+        product_id=#{productParam.productId}
+        AND
+        shop_id=#{shopIdParam}
+    </update>
+    <select id="selectProductByShopId" parameterType="Long" resultMap="productMap">
+        SELECT
+                a.product_id,
+				a.product_name,
+				a.product_desc,
+				a.img_addr,
+				a.normal_price,
+				a.promotion_price,
+				a.priority,
+				a.create_time,
+				a.last_edit_time,
+				a.enable_status,
+				a.product_category_id,
+				a.shop_id,
+				b.product_img_id,
+				b.img_addr as product_img_img_addr,
+				b.img_desc as product_img_img_desc,
+				b.priority as product_img_priority,
+				b.create_time as product_img_create_time,
+				b.product_id as product_img_product_id
+        FROM
+            tb_product as a
+        LEFT JOIN
+            tb_product_img as b
+        ON
+            a.product_id =b.product_id
+         WHERE a.shop_id=#{shopId}
+    </select>
+    <select id="selectProductByProductId" resultMap="productMap" parameterType="Long">
+        SELECT
+                a.product_id,
+				a.product_name,
+				a.product_desc,
+				a.img_addr,
+				a.normal_price,
+				a.promotion_price,
+				a.priority,
+				a.create_time,
+				a.last_edit_time,
+				a.enable_status,
+				a.product_category_id,
+				a.shop_id,
+				b.product_img_id,
+				b.img_addr as product_img_img_addr,
+				b.img_desc as product_img_img_desc,
+				b.priority as product_img_priority,
+				b.create_time as product_img_create_time,
+				b.product_id as product_img_product_id
+        FROM
+            tb_product as a
+        LEFT JOIN
+            tb_product_img as b
+        ON
+            a.product_id =b.product_id
+         WHERE a.product_id=#{productIdParam}
+    </select>
+    <delete id="deleteProduct">
+        DELETE FROM tb_product WHERE
+        product_id=#{productIdParam} AND shop_id =#{shopIdParam}
+    </delete>
+    <delete id="updateProductCategoryIdToNull" parameterType="com.ike.o2o.entity.ProductCategory">
+        UPDATE tb_product
+        SET
+        product_category_id=null
+        WHERE
+        product_category_id=#{productCategoryId}
+    </delete>
+    <select id="selectProductList" resultMap="productMap">
+        SELECT
+        product_id,
+        product_name,
+        product_desc,
+        img_addr,
+        normal_price,
+        promotion_price,
+        priority,
+        create_time,
+        last_edit_time,
+        enable_status,
+        product_category_id,
+        shop_id
+        FROM
+        tb_product
+        <where>      <!-- 组合条件Product: long shopId, long productCategoryId, String productName-->
+            <if test="productConditionParam!=null">
+                <if test="productConditionParam.shop!=null">
+                    and shop_id=#{productConditionParam.shop.shopId}
+                </if>
+                <if test="productConditionParam.productCategory!=null">
+                    and product_category_id=#{productConditionParam.productCategory.productCategoryId}
+                </if>
+                <if test="productConditionParam.productName!=null">
+                    and product_name like  '%${productConditionParam.productName}%'
+                </if>
+            </if>
+        </where>
+        LIMIT #{pageIndexParam},#{pageSizeParam}
+    </select>
+</mapper>

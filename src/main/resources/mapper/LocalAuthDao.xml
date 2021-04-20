@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.LocalAuthDao">
+    <!--tb_local_auth
+    local_auth_id
+    user_id
+    username
+    password
+    create_time
+    last_edit_time
+    -->
+    <!--tb_person_info
+    user_id
+    name
+    profile_img
+    email
+    gender
+    enable_status
+    user_type
+    create_time
+    last_edit_time
+    -->
+    <insert id="insertLocalAuth" useGeneratedKeys="true" keyProperty="localAuthId" keyColumn="local_auth_id"
+            parameterType="com.ike.o2o.entity.LocalAuth">
+        INSERT INTO
+        tb_local_auth
+        (
+        user_id,
+        username,
+        password,
+        create_time,
+        last_edit_time
+        )
+        VALUE
+        (
+        #{personInfo.userId},
+        #{username},
+        #{password},
+        #{createTime},
+        #{lastEditTime}
+        )
+    </insert>
+    <update id="updateLocalAuth">
+        UPDATE
+        tb_local_auth
+        SET
+        <if test="password != null">
+            last_edit_time=#{lastEditTime},
+        </if>
+        password=#{newPassword}
+        WHERE
+        user_id=#{userId}
+        AND
+        username=#{username}
+        AND
+        password=#{password}
+    </update>
+    <update id="updateLocalAuthBindPersonInfo">
+        UPDATE
+        tb_local_auth
+        SET
+        user_id=#{personInfoIdParam}
+        WHERE
+        local_auth_id =#{localAuthIdParam}
+        AND
+        username=#{usernameParam}
+        AND
+        password=#{passwordParam}
+    </update>
+    <!-- 封装localAuth对象 -->
+    <resultMap id="localAuthResultMap" type="com.ike.o2o.entity.LocalAuth">
+        <id property="localAuthId" column="local_auth_id" javaType="Long"/>
+        <result property="username" column="username" javaType="String"/>
+        <result property="password" column="password" javaType="String"/>
+        <result property="createTime" column="create_time" javaType="java.util.Date"/>
+        <result property="lastEditTime" column="last_edit_time" javaType="java.util.Date"/>
+        <association property="personInfo" column="user_id" javaType="com.ike.o2o.entity.PersonInfo">
+            <id property="userId" column="user_id"/>
+            <result property="name" column="name"/>
+            <result property="profileImg" column="profile_img"/>
+            <result property="email" column="email"/>
+            <result property="gender" column="gender"/>
+            <result property="enableStatus" column="enable_status"/>
+            <result property="userType" column="user_type"/>
+            <result property="createTime" column="p_create_time"/>
+            <result property="lastEditTime" column="p_create_time"/>
+        </association>
+    </resultMap>
+    <select id="queryLocalByUserNameAndPwd" resultMap="localAuthResultMap">
+      SELECT
+        l.local_auth_id,
+        l.user_id,
+        l.username,
+        l.password,
+        l.create_time,
+        l.last_edit_time,
+        p.name,
+        p.profile_img,
+        p.email,
+        p.gender,
+        p.enable_status,
+        p.user_type,
+        p.create_time as p_create_time,
+        p.last_edit_time as p_create_time
+      FROM
+      tb_local_auth as l
+      LEFT JOIN
+      tb_person_info as p
+      ON
+      l.user_id = p.user_id
+      WHERE
+      l.username=#{username}
+      AND
+      l.password=#{password}
+    </select>
+    <select id="queryLocalByUserId" resultMap="localAuthResultMap">
+      SELECT
+        l.local_auth_id,
+        l.user_id,
+        l.username,
+        l.password,
+        l.create_time,
+        l.last_edit_time,
+        p.name,
+        p.profile_img,
+        p.email,
+        p.gender,
+        p.enable_status,
+        p.user_type,
+        p.create_time as p_create_time,
+        p.last_edit_time as p_create_time
+      FROM
+      tb_local_auth as l
+      LEFT JOIN
+      tb_person_info as p
+      ON
+      l.user_id = p.user_id
+      WHERE
+      l.user_id=#{userId}
+    </select>
+</mapper>

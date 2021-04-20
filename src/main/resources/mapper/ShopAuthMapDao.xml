@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.ShopAuthMapDao">
+    <insert id="insertShopAuth" useGeneratedKeys="true" keyProperty="shopAuthId" keyColumn="shop_auth_id"
+            parameterType="com.ike.o2o.entity.ShopAuthMap">
+        INSERT INTO tb_shop_auth
+        (
+        <!-- shop_auth_id -->
+        create_time,
+        last_edit_time,
+        title,
+        title_flag,
+        enable_status,
+        employee_id,
+        shop_id
+        )
+        VALUES
+        (
+        <!-- shopAuthId -->
+        #{shopAuthMap.createTime},
+        #{shopAuthMap.lastEditTime},
+        #{shopAuthMap.title},
+        #{shopAuthMap.titleFlag},
+        #{shopAuthMap.enableStatus},
+        #{shopAuthMap.employee.userId},
+        #{shopAuthMap.shop.shopId}
+        )
+    </insert>
+    <delete id="deleteShopAuthById" parameterType="Long">
+        DELETE FROM tb_shop_auth
+        WHERE shop_auth_id=#{shopAuthId}
+    </delete>
+    <update id="updateShopAuth" parameterType="com.ike.o2o.entity.ShopAuthMap">
+        UPDATE  tb_shop_auth
+        <set>
+            <if test="shopAuthMap!=null and shopAuthMap.lastEditTime!=null ">
+                last_edit_time=#{shopAuthMap.lastEditTime}
+            </if>
+            <if test="shopAuthMap!=null and shopAuthMap.title!=null ">
+                title=#{shopAuthMap.title}
+            </if>
+            <if test="shopAuthMap!=null and shopAuthMap.titleFlag!=null">
+                title_flag=#{shopAuthMap.titleFlag}
+            </if>
+            <if test="shopAuthMap!=null and shopAuthMap.enableStatus!=null ">
+                enable_status=#{shopAuthMap.enableStatus}
+            </if>
+            <if test="shopAuthMap!=null and shopAuthMap.employee!=null and shopAuthMap.employee.userId !=null">
+                employee_id=#{shopAuthMap.employee.userId}
+            </if>
+        </set>
+        WHERE
+        shop_auth_id=#{shopAuthMap.shopAuthId}
+    </update>
+    <resultMap id="shopAuthResultMap" type="com.ike.o2o.entity.ShopAuthMap">
+        <id property="shopAuthId" column="shop_auth_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="lastEditTime" column="last_edit_time"/>
+        <result property="title" column="title"/>
+        <result property="titleFlag" column="title_flag"/>
+        <result property="enableStatus" column="enable_status"/>
+        <association property="employee"  column="employee_id" javaType="com.ike.o2o.entity.PersonInfo">
+            <id property="userId" column="user_id"/>
+            <result property="name" column="name"/>
+        </association>
+        <association property="shop" column="shop_id" javaType="com.ike.o2o.entity.Shop">
+            <id property="shopId" column="shop_id"/>
+            <result property="shopName" column="shop_name"/>
+        </association>
+    </resultMap>
+    <select id="queryShopAuthById" resultMap="shopAuthResultMap">
+        SELECT
+        sa.shop_auth_id,
+        sa.create_time,
+        sa.last_edit_time,
+        sa.title,
+        sa.title_flag,
+        sa.enable_status,
+        sa.employee_id,
+        sa.shop_id,
+        pi.user_id,
+        pi.name,
+        s.shop_id,
+        s.shop_name
+        FROM
+        tb_shop_auth as sa ,
+        tb_person_info as  pi ,
+        tb_shop s
+        WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_Id =#{shopAuthId}
+    </select>
+    <select id="queryShopAuthCountByShopId" parameterType="Long">
+        SELECT
+        count(1)
+        FROM
+        tb_shop_auth
+        WHERE
+        shop_id=#{shopId}
+    </select>
+    <select id="queryShopAuthMapListByShopId" parameterMap="shopAuthResultMap">
+        SELECT
+        sa.shop_auth_id,
+        sa.create_time,
+        sa.last_edit_time,
+        sa.title,
+        sa.title_flag,
+        sa.enable_status,
+        sa.employee_id,
+        sa.shop_id,
+        pi.user_id,
+        pi.name,
+        s.shop_id,
+        s.shop_name
+        FROM
+        tb_shop_auth as sa ,
+        tb_person_info as  pi ,
+        tb_shop s
+        WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_id=#{shopId}
+        ORDER BY sa.shop_auth_id DESC limit #{rowIndex},#{pageIndex}
+    </select>
+</mapper>
