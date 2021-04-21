@@ -22,15 +22,15 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class ProductDaoTest  {
+public class ProductDaoTest {
     @Autowired
     private ProductDao productDao;
 
     @Test
-    @Ignore
     public void testAInsertProduct() throws FileNotFoundException {
         Product product = new Product();
 
@@ -52,10 +52,9 @@ public class ProductDaoTest  {
         product.setEnableStatus(1);
         product.setProductCategory(productCategory);
         product.setShop(shop);
-        for (int i = 0; i < 5; i++) {
-            int affect = productDao.insertProduct(product);
-            assertTrue(affect > 0);
-        }
+        product.setPoint(1000);
+
+        productDao.insertProduct(product);
     }
 
     @Test
@@ -81,6 +80,12 @@ public class ProductDaoTest  {
 
         productDao.updateProduct(product, 2);
 
+    }
+
+    @Test
+    public void selectProductByProductIdTest() {
+        Product product = productDao.selectProductByProductId(18);
+        System.out.println(product);
     }
 
 

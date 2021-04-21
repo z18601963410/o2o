@@ -12,6 +12,7 @@
         <result property="createTime" column="create_time"/>
         <result property="lastEditTime" column="last_edit_time"/>
         <result property="enableStatus" column="enable_status"/>
+        <result property="point" column="point"/>
         <association property="productCategory" column="product_category_id"
                      javaType="com.ike.o2o.entity.ProductCategory">
             <id property="productCategoryId" column="product_category_id"/>
@@ -45,7 +46,8 @@
         last_edit_time,
         enable_status,
         product_category_id,
-        shop_id
+        shop_id,
+        point
         )
         VALUES
         (
@@ -59,7 +61,8 @@
         #{lastEditTime},
         #{enableStatus},
         #{productCategory.productCategoryId},
-        #{shop.shopId}
+        #{shop.shopId},
+        #{point}
         )
     </insert>
     <update id="updateProduct" parameterType="com.ike.o2o.entity.Product" keyProperty="product_id"
@@ -97,6 +100,9 @@
             <if test="productParam.productName!=null">
                 product_name=#{productParam.productName}
             </if>
+            <if test="productParam.point!=null">
+                point=#{productParam.point}
+            </if>
         </set>
         WHERE
         product_id=#{productParam.productId}
@@ -117,6 +123,7 @@
 				a.enable_status,
 				a.product_category_id,
 				a.shop_id,
+				a.point,
 				b.product_img_id,
 				b.img_addr as product_img_img_addr,
 				b.img_desc as product_img_img_desc,
@@ -145,6 +152,7 @@
 				a.enable_status,
 				a.product_category_id,
 				a.shop_id,
+				a.point,
 				b.product_img_id,
 				b.img_addr as product_img_img_addr,
 				b.img_desc as product_img_img_desc,
@@ -183,7 +191,8 @@
         last_edit_time,
         enable_status,
         product_category_id,
-        shop_id
+        shop_id,
+        point
         FROM
         tb_product
         <where>      <!-- 组合条件Product: long shopId, long productCategoryId, String productName-->

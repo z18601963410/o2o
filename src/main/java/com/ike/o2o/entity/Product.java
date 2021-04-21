@@ -10,13 +10,14 @@ public class Product {
     private Long productId;
     private String productName;
     private String productDesc;
-
     private String imgAddr;
     //商品正常价格
     private String normalPrice;
     //商品折扣价格
     private String promotionPrice;
     private Integer priority;
+    //商品积分
+    private Integer point;
     private Date createTime;
     private Date lastEditTime;
 
@@ -30,13 +31,14 @@ public class Product {
     @Override
     public String toString() {
         return "Product{" +
-                "productID=" + productId +
+                "productId=" + productId +
                 ", productName='" + productName + '\'' +
                 ", productDesc='" + productDesc + '\'' +
                 ", imgAddr='" + imgAddr + '\'' +
                 ", normalPrice='" + normalPrice + '\'' +
                 ", promotionPrice='" + promotionPrice + '\'' +
                 ", priority=" + priority +
+                ", point=" + point +
                 ", createTime=" + createTime +
                 ", lastEditTime=" + lastEditTime +
                 ", enableStatus=" + enableStatus +
@@ -44,6 +46,18 @@ public class Product {
                 ", productCategory=" + productCategory +
                 ", shop=" + shop +
                 '}';
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
+    }
+
+    public Integer getPoint() {
+        return point;
+    }
+
+    public void setPoint(Integer point) {
+        this.point = point;
     }
 
     public Long getProductId() {
