@@ -17,13 +17,13 @@
         VALUES
         (
         <!-- shopAuthId -->
-        #{shopAuthMap.createTime},
-        #{shopAuthMap.lastEditTime},
-        #{shopAuthMap.title},
-        #{shopAuthMap.titleFlag},
-        #{shopAuthMap.enableStatus},
-        #{shopAuthMap.employee.userId},
-        #{shopAuthMap.shop.shopId}
+        #{createTime},
+        #{lastEditTime},
+        #{title},
+        #{titleFlag},
+        #{enableStatus},
+        #{employee.userId},
+        #{shop.shopId}
         )
     </insert>
     <delete id="deleteShopAuthById" parameterType="Long">
@@ -86,9 +86,9 @@
         tb_shop_auth as sa ,
         tb_person_info as  pi ,
         tb_shop s
-        WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_Id =#{shopAuthId}
+        WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_auth_id =#{shopAuthId}
     </select>
-    <select id="queryShopAuthCountByShopId" parameterType="Long">
+    <select id="queryShopAuthCountByShopId" parameterType="Long" resultType="int">
         SELECT
         count(1)
         FROM
@@ -96,7 +96,7 @@
         WHERE
         shop_id=#{shopId}
     </select>
-    <select id="queryShopAuthMapListByShopId" parameterMap="shopAuthResultMap">
+    <select id="queryShopAuthMapListByShopId" resultMap="shopAuthResultMap">
         SELECT
         sa.shop_auth_id,
         sa.create_time,
@@ -115,6 +115,34 @@
         tb_person_info as  pi ,
         tb_shop s
         WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_id=#{shopId}
+        ORDER BY sa.shop_auth_id DESC limit #{rowIndex},#{pageIndex}
+    </select>
+
+    <select id="queryShopAuthByCondition" resultMap="shopAuthResultMap">
+         SELECT
+        sa.shop_auth_id,
+        sa.create_time,
+        sa.last_edit_time,
+        sa.title,
+        sa.title_flag,
+        sa.enable_status,
+        sa.employee_id,
+        sa.shop_id,
+        pi.user_id,
+        pi.name,
+        s.shop_id,
+        s.shop_name
+        FROM
+        tb_shop_auth as sa ,
+        tb_person_info as  pi ,
+        tb_shop s
+        WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id
+        <if test="shopAuthMapCondition !=null and shopAuthMapCondition.shop!=null and shopAuthMapCondition.shop.shopId!=null">
+            and sa.shop_id=#{shopAuthMapCondition.shop.shopId}
+        </if>
+        <if test="shopAuthMapCondition !=null and shopAuthMapCondition.enableStatus!=null">
+            and sa.enable_status=#{shopAuthMapCondition.enableStatus}
+        </if>
         ORDER BY sa.shop_auth_id DESC limit #{rowIndex},#{pageIndex}
     </select>
 </mapper>
