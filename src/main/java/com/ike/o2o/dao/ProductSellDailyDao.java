@@ -25,14 +25,14 @@ public interface ProductSellDailyDao {
     /**
      * 统计平台所有商品的日销量
      *
-     * @return
+     * @return 收到影响行数
      */
     int insertProductSellDaily();
 
     /**
      * 统计平台没有销量的商品
      *
-     * @return
+     * @return 收到影响行数
      */
     int insertDefaultProductSellDaily();
 }

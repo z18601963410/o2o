@@ -12,6 +12,7 @@ public class UserAwardMap {
     private Integer point;
     //状态 0未兑换,1已兑换
     private Integer usedStatus;
+
     //归属用户
     private PersonInfo user;
     //归属店铺

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.UserProductMapDao">
+    <insert id="insertUserProductMap" useGeneratedKeys="true" keyColumn="user_product_id" keyProperty="userProductId">
+      INSERT INTO tb_user_product_map(
+      point,
+      create_time,
+      user_id,
+      product_id,
+      shop_id,
+      operator_id
+      )
+      VALUE(
+      #{userProductMap.point},
+      #{userProductMap.createTime},
+      #{userProductMap.user.userId},
+      #{userProductMap.product.productId},
+      #{userProductMap.shop.shopId},
+      #{userProductMap.operator.userId}
+      )
+    </insert>
+    <select id="queryUserProductMap" resultMap="userProductResultMap">
+        SELECT
+        uwm.user_product_id,
+        uwm.create_time,uwm.point,
+        usered.user_id,usered.name,
+        shop.shop_id,shop.shop_name,
+        product.product_id,product.product_name,
+        operator.user_id as operator_user_id,operator.name as operator_user_name
+        FROM
+        tb_user_product_map as uwm
+        ,tb_person_info as usered
+        ,tb_shop as shop
+        ,tb_product as product
+        ,tb_person_info as operator
+        WHERE
+        uwm.user_id=usered.user_id AND
+        uwm.shop_id=shop.shop_id AND
+        uwm.product_id=product.product_id AND
+        uwm.operator_id=operator.user_id
+        <!-- 复合条件包含: 顾客、商铺、操作员 -->
+        <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
+            AND usered.user_id=#{userProductMapCondition.user.userId}
+        </if>
+        <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
+            AND shop.shop_id=#{userProductMapCondition.shop.shopId}
+        </if>
+        <if test="userProductMapCondition!=null and userProductMapCondition.operator!=null and userProductMapCondition.operator.userId!=null">
+            AND operator.user_id=#{userProductMapCondition.operator.userId}
+        </if>
+        ORDER BY uwm.user_product_id DESC
+        LIMIT #{rowIndex},#{pageSize}
+    </select>
+    <select id="queryUserProductMapCount" resultType="int">
+        SELECT
+        count(1)
+        FROM
+        tb_user_product_map as uwm
+        <where>
+            <!-- 复合条件包含: 顾客、商铺、操作员 -->
+            <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
+                 uwm.user_id=#{userProductMapCondition.user.userId}
+            </if>
+            <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
+                 uwm.shop_id=#{userProductMapCondition.shop.shopId}
+            </if>
+            <if test="userProductMapCondition!=null and userProductMapCondition.operator!=null and userProductMapCondition.operator.userId!=null">
+                 uwm.operator_id=#{userProductMapCondition.operator.userId}
+            </if>
+        </where>
+    </select>
+    <resultMap id="userProductResultMap" type="com.ike.o2o.entity.UserProductMap">
+        <id property="userProductId" column="user_product_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="point" column="point"/>
+        <association property="user" column="user_id" javaType="com.ike.o2o.entity.PersonInfo">
+            <id property="userId" column="user_id"/>
+            <result property="name" column="name"/>
+        </association>
+        <association property="shop" column="shop_id" javaType="com.ike.o2o.entity.Shop">
+            <id property="shopId" column="shop_id"/>
+            <result property="shopName" column="shop_name"/>
+        </association>
+        <association property="product" column="product_id" javaType="com.ike.o2o.entity.Product">
+            <id property="productId" column="product_id"/>
+            <result property="productName" column="product_name"/>
+        </association>
+        <association property="operator" column="operator_id" javaType="com.ike.o2o.entity.PersonInfo">
+            <id property="userId" column="operator_user_id"/>
+            <result property="name" column="operator_user_name"/>
+        </association>
+    </resultMap>
+</mapper>

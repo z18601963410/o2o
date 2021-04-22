@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ike.o2o.dao.UserShopMapDao">
+    <insert id="insertUserShopMap" useGeneratedKeys="true" keyProperty="userShopId" keyColumn="user_shop_id">
+      INSERT INTO tb_user_shop_map(create_time,point,user_id,shop_id)
+      VALUES
+      (
+      #{createTime},
+      #{point},
+      #{user.userId},
+      #{shop.shopId}
+      )
+    </insert>
+    <update id="updateUserShopMap" parameterType="com.ike.o2o.entity.UserShopMap">
+        UPDATE tb_user_shop_map
+        <set>
+            <if test="#{point}!=null">
+                point=#{point}
+            </if>
+        </set>
+        WHERE
+        user_id=#{user.userId} and shop_id=#{shop.shopId}
+    </update>
+    <select id="queryUserShopList" resultMap="userShopResultMap">
+        SELECT
+         usm.user_shop_id,usm.create_time,usm.point,
+         personinfo.user_id ,personinfo.name,
+         shop.shop_id,shop.shop_name
+		 FROM
+		 tb_user_shop_map as usm , tb_shop as shop ,tb_person_info as personinfo
+         WHERE
+		 usm.user_id=personinfo.user_id
+         AND
+         usm.shop_id=shop.shop_id
+         <if test="userShopMapCondition!=null and userShopMapCondition.point!=null">
+             AND usm.point &gt;= #{userShopMapCondition.point}
+         </if>
+        ORDER BY usm.user_shop_id DESC
+         LIMIT #{rowIndex},#{pageSize}
+    </select>
+    <select id="queryUserShopListCount" parameterType="com.ike.o2o.entity.UserShopMap" resultType="int">
+        SELECT COUNT(1) FROM tb_user_shop_map
+        <where>
+            <if test="userShopMapCondition!=null and userShopMapCondition.user!=null and userShopMapCondition.user.userId">
+                user_id= #{userShopMapCondition.user.userId}
+            </if>
+            <if test="userShopMapCondition!=null and userShopMapCondition.shop!=null and userShopMapCondition.shop.shopId">
+                shop_id= #{userShopMapCondition.shop.shopId}
+            </if>
+            <if test="userShopMapCondition!=null and userShopMapCondition.point!=null">
+                point &gt;=#{userShopMapCondition.point}
+            </if>
+        </where>
+    </select>
+    <select id="queryUserShopMapById" resultMap="userShopResultMap">
+        SELECT
+        usm.user_shop_id,usm.create_time,usm.point,
+        personinfo.user_id ,personinfo.name,
+        shop.shop_id,shop.shop_name
+        FROM
+        tb_user_shop_map as usm , tb_shop as shop ,tb_person_info as personinfo
+        WHERE
+        usm.user_id=personinfo.user_id
+        AND
+        usm.shop_id=shop.shop_id
+        AND
+        usm.user_id= #{userId}
+        AND
+        usm.shop_id= #{shopId}
+    </select>
+    <resultMap id="userShopResultMap" type="com.ike.o2o.entity.UserShopMap">
+        <id property="userShopId" column="user_shop_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="point" column="point"/>
+        <association property="user" column="user_id">
+            <id property="userId" column="user_id"/>
+            <result property="name" column="name"/>
+        </association>
+        <association property="shop" column="shop_id">
+            <id property="shopId" column="shop_id"/>
+            <result property="shopName" column="shop_name"/>
+        </association>
+    </resultMap>
+</mapper>

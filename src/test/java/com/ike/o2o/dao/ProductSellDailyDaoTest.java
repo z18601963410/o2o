@@ -39,11 +39,13 @@ public class ProductSellDailyDaoTest {
 
     @Test
     public void testBInsertProductSellDaily() {
-        productSellDailyDao.insertProductSellDaily();
+        int affect=productSellDailyDao.insertProductSellDaily();
+        System.out.println(affect);
     }
 
     @Test
     public void testCInsertDefaultProductSellDaily() {
-        productSellDailyDao.insertDefaultProductSellDaily();
+        int affect=productSellDailyDao.insertDefaultProductSellDaily();
+        System.out.println(affect);
     }
 }
