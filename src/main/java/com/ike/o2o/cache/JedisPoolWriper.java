@@ -17,10 +17,10 @@ public class JedisPoolWriper {
      * @param host          主机地址
      * @param port          端口号
      */
-    public JedisPoolWriper(final JedisPoolConfig pooloolConfig, final String host, final int port) {
+    public JedisPoolWriper(final JedisPoolConfig pooloolConfig, final String host, final int port,int timeout,String redisPassword) {
         try {
             //初始化连接池对象  public JedisPool(GenericObjectPoolConfig poolConfig, String host, int port, int timeout, String password, int database)
-            jedisPool = new JedisPool(pooloolConfig, host, port);
+            jedisPool = new JedisPool(pooloolConfig, host, port,timeout,redisPassword);
         } catch (Exception e) {
             e.printStackTrace();
         }

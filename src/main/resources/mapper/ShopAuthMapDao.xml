@@ -115,7 +115,7 @@
         tb_person_info as  pi ,
         tb_shop s
         WHERE sa.shop_id=s.shop_id AND sa.employee_id =pi.user_id AND sa.shop_id=#{shopId}
-        ORDER BY sa.shop_auth_id DESC limit #{rowIndex},#{pageIndex}
+        limit #{rowIndex},#{pageIndex}
     </select>
 
     <select id="queryShopAuthByCondition" resultMap="shopAuthResultMap">

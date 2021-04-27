@@ -2,6 +2,7 @@ package com.ike.o2o.config.redis;
 
 import com.ike.o2o.cache.JedisPoolWriper;
 import com.ike.o2o.cache.JedisUtil;
+import com.ike.o2o.until.DESUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -32,6 +33,12 @@ public class RedisConfiguration {
     @Value("${redis.port}")
     private Integer redisPort;//主机端口
 
+    @Value("${redis.pool.password}")
+    private String redisPassword;
+
+    @Value("${redis.pool.connTimeOut}")
+    private int connTimeOut;
+
     @Autowired
     private JedisPoolConfig jedisPoolConfig; //redis配置文件对象
 
@@ -40,6 +47,7 @@ public class RedisConfiguration {
 
     @Autowired
     private JedisUtil jedisUtil;
+
     /**
      * Redis配置文件对象
      *
@@ -62,7 +70,7 @@ public class RedisConfiguration {
      */
     @Bean(name = "jedisWritePool")
     public JedisPoolWriper createJedisWritePool() {
-        return new JedisPoolWriper(jedisPoolConfig, redisHostName, redisPort);
+        return new JedisPoolWriper(jedisPoolConfig, redisHostName, redisPort, connTimeOut, DESUtil.getDecryptString(redisPassword));
     }
 
     /**

@@ -8,6 +8,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/shopAdmin", method = RequestMethod.GET)
 public class ShopAdminController {
 
+    @RequestMapping("/shopauthedit")
+    public String modifyShopAuthMap() {
+        return "shop/shopauthedit";
+    }
+
     @RequestMapping("/shopOperation")
     public String shopOperation() {
         return "shop/shopOperation";
@@ -39,5 +44,58 @@ public class ShopAdminController {
     @RequestMapping("/productmanagement")
     public String productManagement() {
         return "shop/productmanagement";
+    }
+
+
+    //新增
+
+    /**
+     * 奖品管理
+     *
+     * @return html地址
+     */
+    @RequestMapping("/awardmanagement")
+    public String awardmanagement() {
+        return "shop/awardmanagement";
+    }
+
+    /**
+     * 消费记录
+     *
+     * @return html地址
+     */
+    @RequestMapping("/productbuycheck")
+    public String productbuycheck() {
+        return "shop/productbuycheck";
+    }
+
+    /**
+     * 积分兑换
+     *
+     * @return html页面
+     */
+    @RequestMapping("/awarddelivercheck")
+    public String awarddelivercheck() {
+        return "shop/awarddelivercheck";
+    }
+
+    /**
+     * 顾客积分
+     *
+     * @return html页面
+     */
+    @RequestMapping("/usershopcheck")
+    public String usershopcheck() {
+        return "shop/usershopcheck";
+    }
+
+    /**
+     * 授权管理
+     *
+     * @return html页面
+     */
+    @RequestMapping("/shopauthmanagement")
+    public String shopauthmanagement() {
+        return "shop/shopauthmanagement";
     }
 }

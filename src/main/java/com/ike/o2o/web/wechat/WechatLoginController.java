@@ -26,14 +26,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 获取关注公众号之后的微信用户信息的接口，如果在微信浏览器里访问
  * https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxd68d9331f1f044b4&redirect_uri=http://8.136.235.141/o2o/wechatlogin/logincheck&role_type=1&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect
  * 则这里将会获取到code,之后再可以通过code获取到access_token 进而获取到用户信息
- * 连接地址含义说明
+ * 连接地址含义说明:
  * https://open.weixin.qq.com/connect/oauth2/authorize?				#微信提供的API
  * appid=wxd68d9331f1f044b4											#微信测试号唯一标识
  * &redirect_uri=http://8.136.235.141/o2o/wechatlogin/logincheck	#授权后重定向的回调链接地址
  * &role_type=1														#传递的自定义数据
  * &response_type=code												#返回类型，请填写code。回调数据将封装到code中,解析code获得数据
  * &scope=snsapi_userinfo											#应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。并且，即使在未关注的情况下，只要用户授权，也能获取其信息）
- * &state=1															#该值会被微信原样返回。重定向后会带上state参数，开发者可以填写a-zA-Z0-9的参数值，最多128字节，我们可以将其进行比对，防止别人的攻击。
+ * &state=1															#原样返回该参数,可自定义. 此处获取该参数判断是店家管理还是首页访问
  * #wechat_redirect													#微信调用回调地址
  *
  * @author xiangze
@@ -44,7 +44,7 @@ public class WechatLoginController {
 
     private static Logger log = LoggerFactory.getLogger(WechatLoginController.class);
     private static final String FRONTEND = "1";
-    private static final String SHOPEND = "2";
+    //private static final String SHOPEND = "2";
     @Autowired
     private PersonInfoService personInfoService;
     @Autowired
@@ -55,9 +55,13 @@ public class WechatLoginController {
         log.debug("weixin login get...");
         // 获取微信公众号传输过来的code,通过code可获取access_token,进而获取用户信息
         String code = request.getParameter("code");
-        // 这个state可以用来传我们自定义的信息，方便程序调用，这里也可以不用
+
+        // 这个state可以用来传我们自定义的信息，方便程序调用，这里也可以不用,
+        // 获取该参数判断客户类型
         String roleType = request.getParameter("state");
+
         log.debug("weixin login code:" + code);
+
         WechatUser user = null;
         String openId = null;
         WechatAuth auth = null;
@@ -67,6 +71,7 @@ public class WechatLoginController {
                 // 通过code获取access_token                     ->连接微信服务器
                 token = WechatUtil.getUserAccessToken(code);//获取token信息
                 log.debug("weixin login token:" + token.toString());
+
                 // 通过token获取accessToken(唯一性令牌)
                 String accessToken = token.getAccessToken();
                 // 通过token获取openId

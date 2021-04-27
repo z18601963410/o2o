@@ -4,6 +4,7 @@ import com.ike.o2o.BaseTest;
 import com.ike.o2o.entity.PersonInfo;
 import com.ike.o2o.entity.Shop;
 import com.ike.o2o.entity.UserShopMap;
+import com.ike.o2o.until.DateUtil;
 import org.apache.ibatis.annotations.Param;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -98,5 +99,13 @@ public class UserShopMapDaoTest extends BaseTest {
     public void testE_queryListCount() {
         int count = userShopMapDao.queryUserShopListCount(null);
         assertEquals(count, 3);
+    }
+
+    @Test
+    public void test(){
+        List<UserShopMap> userShopMapList = userShopMapDao.queryUserShopList(null, 0, 999);
+        for (int i = 0; i <userShopMapList.size() ; i++) {
+            System.out.println("create_time:"+userShopMapList.get(i).getCreateTime());
+        }
     }
 }

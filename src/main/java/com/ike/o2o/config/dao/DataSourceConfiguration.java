@@ -55,6 +55,8 @@ public class DataSourceConfiguration {
         comboPooledDataSource.setMaxPoolSize(30);
         //最小线程数
         comboPooledDataSource.setMinPoolSize(10);
+
+        comboPooledDataSource.setInitialPoolSize(10);
         //关闭连接后不自动commit
         comboPooledDataSource.setAutoCommitOnClose(false);
         //连接超时时间

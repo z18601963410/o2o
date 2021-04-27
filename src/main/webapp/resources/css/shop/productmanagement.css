@@ -3,16 +3,19 @@
     padding: .5rem;
     border-bottom: none;
 }
+/* 水平滚动
 .row-product * {
     white-space: nowrap;
     overflow: scroll;
 }
-.row-product:last-child {
-    border-bottom: 1px solid #999;
-}
+
 .product-name {
     white-space: nowrap;
     overflow-x: scroll;
+}
+*/
+.row-product:last-child {
+    border-bottom: 1px solid #999;
 }
 .product-wrap a {
     margin-right: 1rem;

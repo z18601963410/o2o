@@ -2,18 +2,18 @@ package com.ike.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ike.o2o.dto.Result;
+import com.ike.o2o.dto.ShopAuthMapExecution;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.*;
 import com.ike.o2o.enums.ProductCategoryStateEnum;
+import com.ike.o2o.enums.ShopAuthMapStateEnum;
 import com.ike.o2o.enums.ShopStateEnum;
-import com.ike.o2o.service.AreaService;
-import com.ike.o2o.service.ShopCategoryService;
-import com.ike.o2o.service.ShopService;
-import com.ike.o2o.service.ProductCategoryService;
+import com.ike.o2o.service.*;
 import com.ike.o2o.until.CodeUtil;
 import com.ike.o2o.until.HttpServletRequestUtil;
 import com.ike.o2o.until.ImageUtil;
 import com.ike.o2o.until.PathUtil;
+import org.apache.catalina.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +29,7 @@ import sun.misc.Request;
 
 import javax.management.ValueExp;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +50,8 @@ public class ShopManagementController {
     /**
      * 获取shopId
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return modelMap
      */
     @RequestMapping(value = "/getShopManagementInfo", method = RequestMethod.GET)
     @ResponseBody
@@ -90,8 +91,8 @@ public class ShopManagementController {
     /**
      * 获取店铺列表
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return modelMap
      */
     @RequestMapping(value = "/getShopList", method = RequestMethod.GET)
     @ResponseBody
@@ -119,8 +120,8 @@ public class ShopManagementController {
     /**
      * 根据店铺ID获取店铺对象
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return modelMap
      */
     @RequestMapping(value = "/getShopById", method = RequestMethod.GET)
     @ResponseBody
@@ -134,7 +135,7 @@ public class ShopManagementController {
                 //根据ID获取shop对象
                 Shop shop = shopService.getByShopId(shopId);
                 //将当前对象存放到session中
-                request.getSession().setAttribute("currentShop",shop);
+                request.getSession().setAttribute("currentShop", shop);
                 //获取区域列表
                 List<Area> areaList = areaService.getAreaList();
                 //添加到modelMap中
@@ -155,8 +156,8 @@ public class ShopManagementController {
     /**
      * 修改店铺
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return modelMap
      */
     @RequestMapping(value = "/modifyShop", method = RequestMethod.POST)//请求
     @ResponseBody//响应
@@ -232,14 +233,14 @@ public class ShopManagementController {
     /**
      * 获取初始化信息,包括店铺类别和区域类别
      *
-     * @return
+     * @return modelMap
      */
     @RequestMapping(value = "/getShopInitInfo", method = RequestMethod.GET)
     @ResponseBody
     private Map<String, Object> getShopInitInfo(HttpServletRequest request) {
         Map<String, Object> modelMap = new HashMap<>();
-        List<ShopCategory> shopCategoryList = new ArrayList<>();
-        List<Area> areaList = new ArrayList<>();
+        List<ShopCategory> shopCategoryList;
+        List<Area> areaList;
         try {
             shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory()).getShopCategoryList();
             areaList = areaService.getAreaList();
@@ -256,8 +257,8 @@ public class ShopManagementController {
     /**
      * 注册店铺
      *
-     * @param request
-     * @return
+     * @param request request
+     * @return modelMap
      */
     @RequestMapping(value = "/registerShop", method = RequestMethod.POST)//请求
     @ResponseBody//响应

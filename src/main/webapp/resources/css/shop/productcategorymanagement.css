@@ -10,7 +10,9 @@
     border: none;
     background-color: #eee;
 }
+/* 文字水平滚动
 .product-category-name {
     white-space: nowrap;
     overflow-x: scroll;
 }
+*/
