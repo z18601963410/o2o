@@ -92,6 +92,7 @@ public class ShopListController {
                 child.setParent(parent);
 
                 shopCategoryList = shopCategoryService.getShopCategoryList(child).getShopCategoryList();
+                modelMap.put("shopCategoryList", shopCategoryList);
             } catch (Exception e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", e.getMessage());
@@ -105,7 +106,6 @@ public class ShopListController {
                 modelMap.put("errMsg", e.getMessage());
             }
         }
-        modelMap.put("shopCategoryList", shopCategoryList);
         //2.获取区域列表信息
         List<Area> areaList = null;
         try {

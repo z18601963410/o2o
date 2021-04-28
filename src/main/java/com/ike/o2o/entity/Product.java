@@ -28,6 +28,13 @@ public class Product {
     private ProductCategory productCategory;
     private Shop shop;
 
+    public Product(String productName) {
+        this.productName = productName;
+    }
+
+    public Product() {
+    }
+
     @Override
     public String toString() {
         return "Product{" +

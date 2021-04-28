@@ -94,27 +94,28 @@ public class UserProductMapDaoTest extends BaseTest {
     @Test
     public void testB_queryAll() {
         UserProductMap userProductMap = new UserProductMap();
-        PersonInfo users = new PersonInfo();
-        users.setUserId(1L);
-        userProductMap.setUser(users);
         Shop shop = new Shop();
-        shop.setShopId(14L);
+        shop.setShopId(57L);
         userProductMap.setShop(shop);
-        PersonInfo operator = new PersonInfo();
-        operator.setUserId(28L);
-        userProductMap.setOperator(operator);
-        List<UserProductMap> userProductMapList = userProductMapDao.queryUserProductMap(userProductMap, 0, 2);
-        assertEquals(userProductMapList.size(),2);
+        Product product=new Product();
+        product.setProductName("蛋糕");
+        userProductMap.setProduct(product);
+        List<UserProductMap> userProductMapList = userProductMapDao.queryUserProductMap(userProductMap, 0, 9999);
+        for (UserProductMap temp:userProductMapList
+             ) {
+            System.out.println(temp);
+        }
+
     }
 
     @Test
     public void testB_queryCount() {
-        UserProductMap userProductMap=new UserProductMap();
+        UserProductMap userProductMap = new UserProductMap();
         Shop shop = new Shop();
         shop.setShopId(14L);
         userProductMap.setShop(shop);
-        int count=userProductMapDao.queryUserProductMapCount(null);
-        assertEquals(count,4);
+        int count = userProductMapDao.queryUserProductMapCount(null);
+        System.out.println(count);
     }
 
 }

@@ -49,6 +49,7 @@
             &lt;
             date_format(#{endTime},'%Y-%m-%d')
         </if>
+        order by product.product_id,create_time
     </select>
 
     <!--统计商品昨天的销量情况-->
@@ -73,7 +74,8 @@
 		tb_product p
 		WHERE
 		p.product_id NOT IN
-		(select product_id from tb_product_sell_daily where date_format(create_time,'%Y-%m-%d') =date_sub(curdate(),interval 1 day))
+		(
+		select product_id from tb_product_sell_daily where date_format(create_time,'%Y-%m-%d') =date_sub(curdate(),interval 1 day))
 		)
     </insert>
 </mapper>

@@ -66,7 +66,7 @@ public class ShopAuthManagementController {
 
             //state转换为 wechatInfo(二维码对象)
             try {
-                wechatInfo = mapper.readValue(qrCodeinfo.replace("aaa",""), WechatInfo.class);
+                wechatInfo = mapper.readValue(qrCodeinfo.replace("aaa", ""), WechatInfo.class);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -128,6 +128,12 @@ public class ShopAuthManagementController {
         return false;
     }
 
+    /**
+     * 获取微信对象
+     *
+     * @param request
+     * @return
+     */
     private WechatAuth getEmployeeInfo(HttpServletRequest request) {
         //获取code
         String code = request.getParameter("code");
@@ -162,6 +168,12 @@ public class ShopAuthManagementController {
     //state
     private static int state;
 
+
+    /**
+     * 拼接二维码需要的参数
+     *
+     * @param urlPrefix
+     */
     @Value("${wechat.prefix}")
     public void setUrlPrefix(String urlPrefix) {
         ShopAuthManagementController.urlPrefix = urlPrefix;
@@ -188,6 +200,7 @@ public class ShopAuthManagementController {
     }
 
     /**
+     * 将连接转为二维码 以流的形式返回个页面(页面显示为一个二维码)
      * 生成连接的二维码
      *
      * @param request  request
@@ -341,6 +354,12 @@ public class ShopAuthManagementController {
         return modelMap;
     }
 
+    /**
+     * 查验操作者是否为店铺拥有者
+     *
+     * @param shopAuthId 授权者ID
+     * @return 匹配结果
+     */
     private boolean checkPermission(Long shopAuthId) {
         return shopAuthMapService.queryShopAuthMapById(shopAuthId).getTitleFlag() == 0;
     }

@@ -29,13 +29,15 @@ public class AreaDaoTest {
 
     @Test
     public void test() throws Exception {  //customerId  productId userAwardId  createTime  shopId
-        long shopId = 57l;
-        long createTime = System.currentTimeMillis();
-        String content = "{\"aaashopIdaaa\":" + shopId + ",\"aaacreateTimeaaa\":" + createTime + "}";
-        ObjectMapper objectMapper = new ObjectMapper();
-        WechatInfo wechatInfo = objectMapper.readValue(content.replace("aaa",""), WechatInfo.class);
 
-        System.out.println(wechatInfo);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, 0);
+        Date endTime = calendar.getTime();
+        calendar.add(Calendar.WEEK_OF_MONTH, -1);
+        Date startTime = calendar.getTime();
+        SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        System.out.println("startTime:"+sim.format(startTime));
+        System.out.println("startTime:"+sim.format(endTime));
     }
 
 }

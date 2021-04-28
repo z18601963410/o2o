@@ -1,35 +1,24 @@
 package com.ike.o2o.web.shopadmin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ike.o2o.dto.Result;
-import com.ike.o2o.dto.ShopAuthMapExecution;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.*;
-import com.ike.o2o.enums.ProductCategoryStateEnum;
-import com.ike.o2o.enums.ShopAuthMapStateEnum;
 import com.ike.o2o.enums.ShopStateEnum;
 import com.ike.o2o.service.*;
 import com.ike.o2o.until.CodeUtil;
 import com.ike.o2o.until.HttpServletRequestUtil;
-import com.ike.o2o.until.ImageUtil;
-import com.ike.o2o.until.PathUtil;
-import org.apache.catalina.util.RequestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-import sun.misc.Request;
 
-import javax.management.ValueExp;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,6 +164,7 @@ public class ShopManagementController {
         String shopStr = HttpServletRequestUtil.getString(request, "shopStr");
         ObjectMapper mapper = new ObjectMapper();
         Shop shop = null;
+
         try {
             shop = mapper.readValue(shopStr, Shop.class);
         } catch (Exception e) {
@@ -242,7 +232,10 @@ public class ShopManagementController {
         List<ShopCategory> shopCategoryList;
         List<Area> areaList;
         try {
-            shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory()).getShopCategoryList();
+            ShopCategory parent = new ShopCategory();
+            ShopCategory child = new ShopCategory();
+            child.setParent(parent);
+            shopCategoryList = shopCategoryService.getShopCategoryList(child).getShopCategoryList();
             areaList = areaService.getAreaList();
             modelMap.put("shopCategoryList", shopCategoryList);
             modelMap.put("areaList", areaList);

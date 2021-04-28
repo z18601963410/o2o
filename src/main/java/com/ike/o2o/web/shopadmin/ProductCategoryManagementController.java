@@ -35,7 +35,7 @@ public class ProductCategoryManagementController {
         Map<String, Object> modelMap = new HashMap<>();
         //判断接收的前端参数
         if (productCategoryId != null && productCategoryId > 0) {
-            ProductCategory productCategory=new ProductCategory();
+            ProductCategory productCategory = new ProductCategory();
             productCategory.setProductCategoryId(productCategoryId);
             try {
                 //获取shop对象
@@ -78,21 +78,15 @@ public class ProductCategoryManagementController {
         }
         //productCategories的空值判断
         if (productCategories.size() > 0) {
-            try {
-                //执行批量
-                ProductCategoryExecution productCategoryExecution =
-                        productCategoryService.batchAddProductCategory(productCategories, currentShop.getShopId());
-                //对处理结果进行判断
-                if (productCategoryExecution.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
-                    modelMap.put("success", true);
-                } else {
-                    modelMap.put("success", false);
-                    modelMap.put("errMsg", productCategoryExecution.getStateInfo());
-                }
-            } catch (ProductCategoryOperationException e) {
+            //执行批量
+            ProductCategoryExecution productCategoryExecution =
+                    productCategoryService.batchAddProductCategory(productCategories, currentShop.getShopId());
+            //对处理结果进行判断
+            if (productCategoryExecution.getState() == ProductCategoryStateEnum.SUCCESS.getState()) {
+                modelMap.put("success", true);
+            } else {
                 modelMap.put("success", false);
-                modelMap.put("errMsg", e.getMessage());
-                return modelMap;
+                modelMap.put("errMsg", productCategoryExecution.getStateInfo());
             }
         } else {
             modelMap.put("success", false);

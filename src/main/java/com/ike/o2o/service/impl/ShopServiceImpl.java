@@ -58,6 +58,7 @@ public class ShopServiceImpl implements ShopService {
                 return new ShopExecution(ShopStateEnum.SUCCESS, shop);//店铺更新标识为success,并返回对象
             }
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ShopOperationException("modify shop error:" + e.getMessage());
         }
     }

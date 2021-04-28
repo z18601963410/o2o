@@ -12,7 +12,7 @@
       )
       VALUE(
       #{userProductMap.point},
-      #{userProductMap.createTime},
+      date_format(#{userProductMap.createTime},'%Y-%m-%d'),
       #{userProductMap.user.userId},
       #{userProductMap.product.productId},
       #{userProductMap.shop.shopId},
@@ -39,14 +39,12 @@
         uwm.product_id=product.product_id AND
         uwm.operator_id=operator.user_id
         <!-- 复合条件包含: 顾客、商铺、操作员 -->
-        <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
-            AND usered.user_id=#{userProductMapCondition.user.userId}
+
+        <if test="userProductMapCondition!=null and userProductMapCondition.product!=null and userProductMapCondition.product.productName!=null">
+            AND product.product_name like '%${userProductMapCondition.product.productName}%'
         </if>
         <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
             AND shop.shop_id=#{userProductMapCondition.shop.shopId}
-        </if>
-        <if test="userProductMapCondition!=null and userProductMapCondition.operator!=null and userProductMapCondition.operator.userId!=null">
-            AND operator.user_id=#{userProductMapCondition.operator.userId}
         </if>
         ORDER BY uwm.user_product_id DESC
         LIMIT #{rowIndex},#{pageSize}
@@ -56,18 +54,21 @@
         count(1)
         FROM
         tb_user_product_map as uwm
-        <where>
-            <!-- 复合条件包含: 顾客、商铺、操作员 -->
-            <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
-                 uwm.user_id=#{userProductMapCondition.user.userId}
-            </if>
-            <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
-                 uwm.shop_id=#{userProductMapCondition.shop.shopId}
-            </if>
-            <if test="userProductMapCondition!=null and userProductMapCondition.operator!=null and userProductMapCondition.operator.userId!=null">
-                 uwm.operator_id=#{userProductMapCondition.operator.userId}
-            </if>
-        </where>
+        ,tb_person_info as usered
+        ,tb_shop as shop
+        ,tb_product as product
+        ,tb_person_info as operator
+        WHERE
+        uwm.user_id=usered.user_id AND
+        uwm.shop_id=shop.shop_id AND
+        uwm.product_id=product.product_id AND
+        uwm.operator_id=operator.user_id
+        <if test="userProductMapCondition!=null and userProductMapCondition.product!=null and userProductMapCondition.product.productName!=null">
+            AND product.product_name like '%${userProductMapCondition.product.productName}%'
+        </if>
+        <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
+            AND shop.shop_id=#{userProductMapCondition.shop.shopId}
+        </if>
     </select>
     <resultMap id="userProductResultMap" type="com.ike.o2o.entity.UserProductMap">
         <id property="userProductId" column="user_product_id"/>

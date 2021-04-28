@@ -70,7 +70,9 @@ $(function() {
                         $.toast('提交成功！');
                         getList();
                     } else {
+
                         $.toast('提交失败！');
+                        //alert(data.errMsg);
                     }
                 }
             });

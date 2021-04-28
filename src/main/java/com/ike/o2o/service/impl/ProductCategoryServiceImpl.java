@@ -41,19 +41,26 @@ public class ProductCategoryServiceImpl implements com.ike.o2o.service.ProductCa
     @Override
     @Transactional
     public ProductCategoryExecution batchAddProductCategory(List<ProductCategory> productCategories, long ShopId) {
-        ProductCategoryStateEnum productCategoryStateEnum;
+
         for (ProductCategory productCategory : productCategories
         ) {
             //判断添加的商品分类的商铺ID是否非法
             if (productCategory.getShopId() != ShopId) {
-                productCategoryStateEnum = ProductCategoryStateEnum.OFFLINE;
-                return new ProductCategoryExecution(productCategoryStateEnum);
+                return new ProductCategoryExecution(ProductCategoryStateEnum.OFFLINE);
             }
         }
         //执行插入
-        productCategoryDao.insertProductCategoryList(productCategories);
-        productCategoryStateEnum = ProductCategoryStateEnum.SUCCESS;
-        return new ProductCategoryExecution(productCategoryStateEnum, productCategories);
+        try {
+            int affect = productCategoryDao.insertProductCategoryList(productCategories);
+            if (affect > 0) {
+                return new ProductCategoryExecution(ProductCategoryStateEnum.SUCCESS, productCategories);
+            }else{
+                throw new ProductCategoryOperationException("商品分类新增失败");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ProductCategoryOperationException("商品分类插入失败");
+        }
     }
 
     /**
@@ -64,10 +71,9 @@ public class ProductCategoryServiceImpl implements com.ike.o2o.service.ProductCa
     @Override
     @Transactional
     public ProductCategoryExecution removeProductCategory(ProductCategory productCategory) throws ProductCategoryOperationException {
-        // TODO 将此商品类别下的商品的类别ID置为空
         try {
             //将该商品分类的商品的productCategoryId置为null
-            int pdAffect= productDao.updateProductCategoryIdToNull(productCategory);
+            int pdAffect = productDao.updateProductCategoryIdToNull(productCategory);
             //操作成功时不直接提交,需要if判断成功后才能提交,分两步进行操作,使用事务进行管理
             int affect = productCategoryDao.deleteProductCategory(productCategory);
             if (affect > 0) {

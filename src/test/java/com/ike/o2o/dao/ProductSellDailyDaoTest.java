@@ -12,7 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -24,28 +27,29 @@ public class ProductSellDailyDaoTest {
 
     @Test
     public void testAQueryProductSellDaily() {
-        Product product = new Product();
-        Shop shop =new Shop();
-        //shop.setShopId(14L);
-        ProductSellDaily productSellDaily = new ProductSellDaily();
-        productSellDaily.setProduct(product);
-        productSellDaily.setShop(shop);
-        List<ProductSellDaily> productSellDailyList=productSellDailyDao.queryProductSellDaily(productSellDaily, null,null);
 
-        for(ProductSellDaily p:productSellDailyList){
-            System.out.println(p.getShop().getShopId()+":"+p.getCreateTime());
+        List<ProductSellDaily> productSellDailyList = productSellDailyDao.queryProductSellDaily(null, null, null);
+        HashSet<Date> nameSet = new LinkedHashSet<>();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        for (ProductSellDaily p : productSellDailyList) {
+            nameSet.add(p.getCreateTime());
+            //System.out.println("商品ID:"+p.getProduct().getProductId()+"商品售出时间:"+simpleDateFormat.format(p.getCreateTime()));
+        }
+        for (Date date :
+                nameSet) {
+            System.out.println(simpleDateFormat.format(date));
         }
     }
 
     @Test
     public void testBInsertProductSellDaily() {
-        int affect=productSellDailyDao.insertProductSellDaily();
+        int affect = productSellDailyDao.insertProductSellDaily();
         System.out.println(affect);
     }
 
     @Test
     public void testCInsertDefaultProductSellDaily() {
-        int affect=productSellDailyDao.insertDefaultProductSellDaily();
+        int affect = productSellDailyDao.insertDefaultProductSellDaily();
         System.out.println(affect);
     }
 }
