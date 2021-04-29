@@ -36,8 +36,8 @@ public class AreaDaoTest {
         calendar.add(Calendar.WEEK_OF_MONTH, -1);
         Date startTime = calendar.getTime();
         SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        System.out.println("startTime:"+sim.format(startTime));
-        System.out.println("startTime:"+sim.format(endTime));
+        System.out.println("startTime :"+sim.format(startTime));
+        System.out.println("startTime :"+sim.format(endTime));
     }
 
 }
