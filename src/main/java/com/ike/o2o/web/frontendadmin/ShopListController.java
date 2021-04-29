@@ -101,6 +101,7 @@ public class ShopListController {
             try {
                 //如果没有一级分类信息则查询所有店铺:首页点击的全部商店
                 shopCategoryList = shopCategoryService.getShopCategoryList(new ShopCategory()).getShopCategoryList();
+                modelMap.put("shopCategoryList", shopCategoryList);
             } catch (Exception e) {
                 modelMap.put("success", false);
                 modelMap.put("errMsg", e.getMessage());
