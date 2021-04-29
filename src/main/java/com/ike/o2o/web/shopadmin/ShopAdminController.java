@@ -49,6 +49,11 @@ public class ShopAdminController {
 
     //新增
 
+    @RequestMapping("/awardoperation")
+    public String awardoperation() {
+        return "shop/awardoperation";
+    }
+
     /**
      * 奖品管理
      *
@@ -97,5 +102,15 @@ public class ShopAdminController {
     @RequestMapping("/shopauthmanagement")
     public String shopauthmanagement() {
         return "shop/shopauthmanagement";
+    }
+
+    /**
+     * 奖品详情页面
+     *
+     * @return
+     */
+    @RequestMapping("/awarddetail")
+    public String awarddetail() {
+        return "shop/awarddetail";
     }
 }

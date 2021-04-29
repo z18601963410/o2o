@@ -84,7 +84,7 @@ public class AwardDaoTest {
         Award award = new Award();
         award.setAwardId(4L);
         award.setAwardDesc("我修改了商品描述");
-        int affect = awardDao.updateAward(award, 15L);
+        int affect = awardDao.updateAward(award);
         assertEquals(affect, 1);
     }
 

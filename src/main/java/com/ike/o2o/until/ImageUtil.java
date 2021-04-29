@@ -9,13 +9,16 @@ import java.util.Date;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 
 import com.ike.o2o.dto.ImageHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 public class ImageUtil {
     //private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
@@ -62,13 +65,13 @@ public class ImageUtil {
         logger.debug("current relativeAddr is :" + relativeAddr);
         // 获取文件要保存到的目标路径
         File dest = new File(PathUtil.getImgBasePath() + relativeAddr);
-        System.out.println("文件全路径:" + PathUtil.getImgBasePath() + relativeAddr);
+        //System.out.println("文件全路径:" + PathUtil.getImgBasePath() + relativeAddr);
         logger.debug("current complete addr is :" + PathUtil.getImgBasePath() + relativeAddr);
         //logger.debug("basePath is :" + basePath);
         // 调用Thumbnails生成带有水印的图片
         try {
             Thumbnails.of(thumbnailInputStream).size(200, 200)      // /Users/baidu/work/image   D:/workspace/image  System.getProperty("file.separator")
-                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(PathUtil.getImgBasePath()+System.getProperty("file.separator").trim()+"watermark.jpg")), 0.25f)
+                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(PathUtil.getImgBasePath() + System.getProperty("file.separator").trim() + "watermark.jpg")), 0.25f)
                     .outputQuality(0.8f).toFile(dest);
         } catch (IOException e) {
             logger.error(e.toString());
@@ -114,6 +117,7 @@ public class ImageUtil {
         String nowTimeStr = sDateFormat.format(new Date());
         return nowTimeStr + rannum;
     }
+
     /**
      * storePath时文件的路径或者目录的路径,如果是文件路径则删除文件
      * 如果是目录路径则删除目录下的所有文件
@@ -132,6 +136,7 @@ public class ImageUtil {
             fileOrPath.delete();//判断不是目录则直接删除文件
         }
     }
+
     /**
      * 处理详情图，并返回新生成图片的相对值路径
      *
@@ -155,7 +160,7 @@ public class ImageUtil {
         // 调用Thumbnails生成带有水印的图片
         try {
             Thumbnails.of(thumbnail.getImage()).size(337, 640)
-                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(PathUtil.getImgBasePath()+System.getProperty("file.separator").trim()+"watermark.jpg")), 0.25f)
+                    .watermark(Positions.BOTTOM_RIGHT, ImageIO.read(new File(PathUtil.getImgBasePath() + System.getProperty("file.separator").trim() + "watermark.jpg")), 0.25f)
                     .outputQuality(0.9f).toFile(dest);
         } catch (IOException e) {
             logger.error(e.toString());
@@ -163,5 +168,33 @@ public class ImageUtil {
         }
         // 返回图片相对路径地址
         return relativeAddr;
+    }
+
+    /**
+     * 获取request中图片流对象
+     *
+     * @param request   request
+     * @param fieldName 字段名称
+     * @return ImageHolder
+     */
+    public static ImageHolder getImageHolder(HttpServletRequest request, String fieldName) {
+        //解析request
+        CommonsMultipartResolver commonsMultipartResolver = new CommonsMultipartResolver(request.getSession().getServletContext());
+        //判断是否包含文件流
+        if (commonsMultipartResolver.isMultipart(request)) {
+            //类型转换
+            MultipartHttpServletRequest multipartHttpServletRequest = (MultipartHttpServletRequest) request;
+            //根据特定字段,提取文件流,将上传流信息封装套 shopImg中
+            CommonsMultipartFile imgFile = (CommonsMultipartFile) multipartHttpServletRequest.getFile(fieldName);
+            if (imgFile != null) {
+                try {
+                    return new ImageHolder(imgFile.getOriginalFilename(), imgFile.getInputStream());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+        return null;
     }
 }

@@ -12,6 +12,12 @@ public class PathUtil {
     private static String shopPath;
     private static String headLinePath;
     private static String shopCategoryPath;
+    private static String awardPath;
+
+    @Value("${awardPath}")
+    public void setAwardPath(String awardPath) {
+        PathUtil.awardPath = awardPath;
+    }
 
     @Value("${winPath}")
     public void setWinPath(String winPath) {
@@ -67,6 +73,11 @@ public class PathUtil {
 
     public static String getShopCategoryPath() {
         String imagePath = shopCategoryPath;
+        return imagePath.replace("/", seperator);
+    }
+
+    public static String getAwardPath() {
+        String imagePath = awardPath;
         return imagePath.replace("/", seperator);
     }
 

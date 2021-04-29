@@ -1,6 +1,7 @@
 package com.ike.o2o.dao;
 
 import com.ike.o2o.entity.Award;
+import com.ike.o2o.exception.AwardOperationException;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -16,7 +17,7 @@ public interface AwardDao {
      * @param award 新增对象
      * @return 受影响行数
      */
-    int insertAward(Award award);
+    int insertAward(Award award) throws AwardOperationException;
 
     /**
      * 删除礼品对象
@@ -25,16 +26,15 @@ public interface AwardDao {
      * @param shopId  礼品对象所属商铺ID
      * @return 受影响行数
      */
-    int deleteAward(@Param("awardIdCondition") Long awardId, @Param("shopIdCondition") Long shopId);
+    int deleteAward(@Param("awardIdCondition") Long awardId, @Param("shopIdCondition") Long shopId) throws AwardOperationException;
 
     /**
      * 更新礼品对象
      *
-     * @param award  礼品对象实体
-     * @param shopId 商铺ID
+     * @param award 礼品对象实体
      * @return 受影响行数
      */
-    int updateAward(@Param("awardCondition") Award award, @Param("shopIdCondition") Long shopId);
+    int updateAward(@Param("awardCondition") Award award) throws AwardOperationException;
 
     /**
      * 根据条件查询符合要求礼品对象
@@ -42,7 +42,7 @@ public interface AwardDao {
      * @param award 包含条件的礼品对象实体
      * @return 符合条件的礼品对象列表
      */
-    List<Award> queryAward(@Param("awardCondition") Award award,@Param("rowIndex") int rowIndex,@Param("pageSize") int pageSize);
+    List<Award> queryAward(@Param("awardCondition") Award award, @Param("rowIndex") int rowIndex, @Param("pageSize") int pageSize);
 
     /**
      * 根据ID查询礼品对象

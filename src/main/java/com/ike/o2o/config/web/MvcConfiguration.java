@@ -30,6 +30,20 @@ import java.util.List;
 @EnableWebMvc //开启SpringMVC注解模式  等效于:<mvc:annotation-driven/>
 public class MvcConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware {
 
+    private static String resourceLocationsOfWin;
+
+    private static String resourceLocationsOfOS;
+
+    @Value("${winPath}")
+    public void setResourceLocationsOfWin(String resourceLocationsOfWin) {
+        MvcConfiguration.resourceLocationsOfWin = resourceLocationsOfWin;
+    }
+
+    @Value("${linuxPath}")
+    public void setResourceLocationsOfOS(String resourceLocationsOfOS) {
+        MvcConfiguration.resourceLocationsOfOS = resourceLocationsOfOS;
+    }
+
     //Spring容器
     private ApplicationContext applicationContext;
 
@@ -46,7 +60,16 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter implements Applica
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         // registry.addResourceHandler("/resources/**").addResourceLocations("classpath:/resources/");
-        registry.addResourceHandler("/upload/**").addResourceLocations("file:/Users/baidu/work/image/upload/");
+        //根据操作系统类型选择静态文件映射路径
+        String os = System.getProperty("os.name");
+        if (os.toLowerCase().startsWith("win")) {
+            registry.addResourceHandler("/upload/**").addResourceLocations("file:" + resourceLocationsOfWin.trim() + "/upload/");
+        } else {
+            registry.addResourceHandler("/upload/**").addResourceLocations("file:" + resourceLocationsOfOS.trim() + "/upload/");
+        }
+        //原代码 默认os
+        //registry.addResourceHandler("/upload/**").addResourceLocations("file:/Users/baidu/work/image/upload/");
+
     }
 
     /**

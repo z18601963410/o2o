@@ -37,7 +37,7 @@
         )
     </insert>
     <delete id="deleteAward">
-        DELETE FROM tb_award
+        UPDATE tb_award SET enable_status=0
         WHERE shop_id=#{shopIdCondition} AND award_id=#{awardIdCondition}
     </delete>
     <update id="updateAward">
@@ -68,7 +68,7 @@
         WHERE
         award_id=#{awardCondition.awardId}
         AND
-        shop_id=#{shopIdCondition}
+        shop_id=#{awardCondition.shopId}
     </update>
     <select id="queryAwardById" parameterType="Long" resultType="com.ike.o2o.entity.Award">
         SELECT
