@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
         } else {
             //其他异常类型处理 记录日志
             logger.error("系统异常:" + e.getMessage());
-            modelMap.put("errMsg", "未知错误,请联系管理员处理!");
+            modelMap.put("errMsg", "请联系管理员处理!");
         }
         //返回给前端
         modelMap.put("success", false);

@@ -25,7 +25,5 @@ public class EchartXAxis {
 		return type;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
+
 }
