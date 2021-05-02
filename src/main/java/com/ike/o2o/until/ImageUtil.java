@@ -1,57 +1,57 @@
 package com.ike.o2o.until;
 
+import com.ike.o2o.dto.ImageHolder;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartFile;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-import javax.imageio.ImageIO;
-import javax.servlet.http.HttpServletRequest;
-
-import com.ike.o2o.dto.ImageHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Positions;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
-
 public class ImageUtil {
     //private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-    private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private static final Random r = new Random();
-    private static Logger logger = LoggerFactory.getLogger(ImageUtil.class);
+    private static final Logger logger = LoggerFactory.getLogger(ImageUtil.class);
 
     /**
      * 将CommonsMultipartFile转换成File类
      *
-     * @param cFile
-     * @return
+     * @param cFile CommonsMultipartFile
+     * @return File
      */
     public static File transferCommonsMultipartFileToFile(CommonsMultipartFile cFile) {
-        File newFile = new File(cFile.getOriginalFilename());
-        try {
-            cFile.transferTo(newFile);
-        } catch (IllegalStateException e) {
-            logger.error(e.toString());
-            e.printStackTrace();
-        } catch (IOException e) {
-            logger.error(e.toString());
-            e.printStackTrace();
+        String originalFileName = cFile.getOriginalFilename();
+        if (originalFileName != null) {
+            File newFile = null;
+            try {
+                newFile = new File(originalFileName);
+                cFile.transferTo(newFile);
+            } catch (Exception e) {
+                logger.error(e.toString());
+                e.printStackTrace();
+            }
+            return newFile;
         }
-        return newFile;
+        return null;
     }
 
     /**
      * 处理缩略图，并返回新生成图片的相对值路径
      *
-     * @param thumbnailInputStream
-     * @param targetAddr
-     * @return
+     * @param thumbnailInputStream 输入流
+     * @param targetAddr           存储路径PathUtil获取
+     * @return 文件相对路径地址
      */
     public static String generateThumbnail(InputStream thumbnailInputStream, String fileName, String targetAddr) {
         // 获取不重复的随机名
@@ -85,7 +85,7 @@ public class ImageUtil {
      * 创建目标路径所涉及到的目录，即/home/work/xiangze/xxx.jpg, 那么 home work xiangze
      * 这三个文件夹都得自动创建
      *
-     * @param targetAddr
+     * @param targetAddr 文件相对路径
      */
     private static void makeDirPath(String targetAddr) {
         String realFileParentPath = PathUtil.getImgBasePath() + targetAddr;
@@ -98,8 +98,8 @@ public class ImageUtil {
     /**
      * 获取输入文件流的扩展名
      *
-     * @param
-     * @return
+     * @param fileName 文件名
+     * @return 文件扩展名
      */
     private static String getFileExtension(String fileName) {
         //return fileName.substring(fileName.lastIndexOf("."));
@@ -109,7 +109,7 @@ public class ImageUtil {
     /**
      * 生成随机文件名，当前年月日小时分钟秒钟+五位随机数
      *
-     * @return
+     * @return 文件的随机名
      */
     public static String getRandomFileName() {
         // 获取随机的五位数
@@ -138,11 +138,11 @@ public class ImageUtil {
     }
 
     /**
-     * 处理详情图，并返回新生成图片的相对值路径
+     * 详情图处理，并返回新生成图片的相对值路径
      *
-     * @param thumbnail
-     * @param targetAddr
-     * @return
+     * @param thumbnail  ImageHolder(文件名称+文件流)
+     * @param targetAddr 目标地址>PathUtil获取
+     * @return 图片的相对路径地址
      */
     public static String generateNormalImg(ImageHolder thumbnail, String targetAddr) {
         // 获取不重复的随机名
@@ -173,9 +173,9 @@ public class ImageUtil {
     /**
      * 获取request中图片流对象
      *
-     * @param request   request
-     * @param fieldName 字段名称
-     * @return ImageHolder
+     * @param request   request对象
+     * @param fieldName 文件流对应的字段名称
+     * @return ImageHolder(文件流和文明名称的对象组合)
      */
     public static ImageHolder getImageHolder(HttpServletRequest request, String fieldName) {
         //解析request

@@ -3,9 +3,7 @@ package com.ike.o2o.service;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.Shop;
 import com.ike.o2o.exception.ShopOperationException;
-import jdk.internal.util.xml.impl.Input;
 
-import java.io.File;
 import java.io.InputStream;
 
 public interface ShopService {

@@ -5,7 +5,8 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class PathUtil {
-    private static String seperator = System.getProperty("file.separator");
+    //当前操作系统的路径分隔符
+    private static final String separator = System.getProperty("file.separator");
 
     private static String winPath;
     private static String linuxPath;
@@ -13,6 +14,23 @@ public class PathUtil {
     private static String headLinePath;
     private static String shopCategoryPath;
     private static String awardPath;
+
+    /**
+     * 获取根路径
+     *
+     * @return 根据不同操作系统返回响应的根路径
+     */
+    public static String getImgBasePath() {
+        String os = System.getProperty("os.name");
+        String basePath;
+        if (os.toLowerCase().startsWith("win")) {
+            basePath = winPath;
+        } else {
+            basePath = linuxPath;
+        }
+        basePath = basePath.replace("/", separator);
+        return basePath.trim();
+    }
 
     @Value("${awardPath}")
     public void setAwardPath(String awardPath) {
@@ -44,41 +62,45 @@ public class PathUtil {
         PathUtil.shopCategoryPath = shopCategoryPath;
     }
 
+
     /**
-     * 获取根路径
+     * 获取商铺图片对象的相对路径部分
      *
-     * @return 根据不同操作系统返回响应的根路径
+     * @return 相对路径
      */
-    public static String getImgBasePath() {
-        String os = System.getProperty("os.name");
-        String basePath = "";
-        if (os.toLowerCase().startsWith("win")) {
-            basePath = winPath;
-        } else {
-            basePath = linuxPath;
-        }
-        basePath = basePath.replace("/", seperator);
-        return basePath.trim();
-    }
-
     public static String getShopImagePath(long shopId) {
-        String imagePath = shopPath + shopId + seperator;
-        return imagePath.replace("/", seperator);
+        String imagePath = shopPath + shopId + separator;
+        return imagePath.replace("/", separator);
     }
 
+    /**
+     * 获取头条对象的相对路径部分
+     *
+     * @return 相对路径
+     */
     public static String getHeadLineImagePath() {
         String imagePath = headLinePath;
-        return imagePath.replace("/", seperator);
+        return imagePath.replace("/", separator);
     }
 
+    /**
+     * 获取商品分类对象的相对路径部分
+     *
+     * @return 相对路径
+     */
     public static String getShopCategoryPath() {
         String imagePath = shopCategoryPath;
-        return imagePath.replace("/", seperator);
+        return imagePath.replace("/", separator);
     }
 
+    /**
+     * 获取奖品对象的相对路径部分
+     *
+     * @return 相对路径
+     */
     public static String getAwardPath() {
         String imagePath = awardPath;
-        return imagePath.replace("/", seperator);
+        return imagePath.replace("/", separator);
     }
 
 }

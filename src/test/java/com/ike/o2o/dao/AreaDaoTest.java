@@ -1,9 +1,6 @@
 package com.ike.o2o.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ike.o2o.dto.WechatInfo;
 import com.ike.o2o.entity.Area;
-import com.ike.o2o.until.DateUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -38,6 +34,7 @@ public class AreaDaoTest {
         SimpleDateFormat sim=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         System.out.println("startTime :"+sim.format(startTime));
         System.out.println("startTime :"+sim.format(endTime));
+        
     }
 
 }
