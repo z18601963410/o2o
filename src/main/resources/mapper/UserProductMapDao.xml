@@ -8,7 +8,8 @@
       user_id,
       product_id,
       shop_id,
-      operator_id
+      operator_id,
+      last_edit_time
       )
       VALUE(
       #{userProductMap.point},
@@ -16,13 +17,14 @@
       #{userProductMap.user.userId},
       #{userProductMap.product.productId},
       #{userProductMap.shop.shopId},
-      #{userProductMap.operator.userId}
+      #{userProductMap.operator.userId},
+      #{userProductMap.lastEditTime}
       )
     </insert>
     <select id="queryUserProductMap" resultMap="userProductResultMap">
         SELECT
         uwm.user_product_id,
-        uwm.create_time,uwm.point,
+        uwm.create_time,uwm.point,uwm.last_edit_time,
         usered.user_id,usered.name,
         shop.shop_id,shop.shop_name,
         product.product_id,product.product_name,
@@ -45,6 +47,9 @@
         </if>
         <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
             AND shop.shop_id=#{userProductMapCondition.shop.shopId}
+        </if>
+        <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
+            AND usered.user_id=#{userProductMapCondition.user.userId}
         </if>
         ORDER BY uwm.user_product_id DESC
         LIMIT #{rowIndex},#{pageSize}
@@ -69,11 +74,15 @@
         <if test="userProductMapCondition!=null and userProductMapCondition.shop!=null and userProductMapCondition.shop.shopId!=null">
             AND shop.shop_id=#{userProductMapCondition.shop.shopId}
         </if>
+        <if test="userProductMapCondition!=null and userProductMapCondition.user!=null and userProductMapCondition.user.userId!=null">
+            AND usered.user_id=#{userProductMapCondition.user.userId}
+        </if>
     </select>
     <resultMap id="userProductResultMap" type="com.ike.o2o.entity.UserProductMap">
         <id property="userProductId" column="user_product_id"/>
         <result property="createTime" column="create_time"/>
         <result property="point" column="point"/>
+        <result property="lastEditTime" column="last_edit_time"/>
         <association property="user" column="user_id" javaType="com.ike.o2o.entity.PersonInfo">
             <id property="userId" column="user_id"/>
             <result property="name" column="name"/>

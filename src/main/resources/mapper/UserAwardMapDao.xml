@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ike.o2o.dao.UserAwardMapDao">
     <insert id="insertUserAwardMap" useGeneratedKeys="true" keyProperty="userAwardId" keyColumn="user_award_id">
-        INSERT INTO tb_user_award_map(create_time,point,used_status,user_id,shop_id,award_id,operator_id)VALUES
+        INSERT INTO tb_user_award_map(create_time,point,used_status,user_id,shop_id,award_id,operator_id,uwm.last_edit_time)VALUES
         (
         #{userAwardCondition.createTime},
         #{userAwardCondition.point},
@@ -10,26 +10,27 @@
         #{userAwardCondition.user.userId},
         #{userAwardCondition.shop.shopId},
         #{userAwardCondition.award.awardId},
-        #{userAwardCondition.operator.userId}
+        #{userAwardCondition.operator.userId},
+        #{userAwardCondition.lastEditTime}
         )
     </insert>
-    <update id="updateUserAwardMap" parameterType="com.ike.o2o.entity.UserAwardMap">
+    <update id="updateUserAwardMap">
         UPDATE tb_user_award_map
         <set>
-            <if test="#{point}!=null">
-                point=#{point},
+            <if test="userAwardMapCondition!=null and userAwardMapCondition.point!=null">
+                point=#{userAwardMapCondition.point}
             </if>
-            <if test="#{usedStatus}!=null">
-                used_status=#{usedStatus}
+            <if test="userAwardMapCondition!=null and userAwardMapCondition.usedStatus!=null">
+                used_status=#{userAwardMapCondition.usedStatus}
             </if>
         </set>
         WHERE
-        user_award_id=#{userAwardId}
+        user_award_id=#{userAwardMapCondition.userAwardId}
     </update>
     <select id="queryUserAwardMapList" resultMap="userAwardResultMap">
         SELECT
         uwm.user_award_id,
-        uwm.create_time,uwm.point,uwm.used_status,
+        uwm.create_time,uwm.point,uwm.used_status,uwm.last_edit_time,
         usered.user_id,usered.name,
         shop.shop_id,shop.shop_name,
         award.award_id,award.award_name,
@@ -56,13 +57,16 @@
         <if test="userAwardCondition!=null and userAwardCondition.operator!=null and userAwardCondition.operator.userId!=null">
             AND operator.user_id=#{userAwardCondition.operator.userId}
         </if>
+        <if test="userAwardCondition!=null and userAwardCondition.award!=null and userAwardCondition.award.awardName!=null">
+            AND award.award_name like '%${userAwardCondition.award.awardName}%'
+        </if>
         ORDER BY uwm.user_award_id DESC
         LIMIT #{rowIndex},#{pageSize}
     </select>
     <select id="queryReceivedAwardMapList" resultMap="userAwardResultMap">
         SELECT
         uwm.user_award_id,
-        uwm.create_time,uwm.point,uwm.used_status,
+        uwm.create_time,uwm.point,uwm.used_status,uwm.last_edit_time,
         usered.user_id,usered.name,
         shop.shop_id,shop.shop_name,
         award.award_id,award.award_name,
@@ -102,13 +106,13 @@
         <where>
             <!-- 复合条件包含: 顾客、商铺、操作员 -->
             <if test="userAwardCondition!=null and userAwardCondition.user!=null and userAwardCondition.user.userId!=null">
-                uwm.user_id=#{userAwardCondition.user.userId} AND
+                uwm.user_id=#{userAwardCondition.user.userId}
             </if>
             <if test="userAwardCondition!=null and userAwardCondition.shop!=null and userAwardCondition.shop.shopId!=null">
-                uwm.shop_id=#{userAwardCondition.shop.shopId}AND
+                uwm.shop_id=#{userAwardCondition.shop.shopId}
             </if>
             <if test="userAwardCondition!=null and userAwardCondition.operator!=null and userAwardCondition.operator.userId!=null">
-                uwm.operator_id=#{userAwardCondition.operator.userId}AND
+                uwm.operator_id=#{userAwardCondition.operator.userId}
             </if>
             <if test="userAwardCondition!=null and userAwardCondition.usedStatus!=null">
                 uwm.used_status=#{userAwardCondition.usedStatus}
@@ -118,10 +122,10 @@
     <select id="queryUserAwardMapById" parameterType="long" resultMap="userAwardResultMap">
         SELECT
         uwm.user_award_id,
-        uwm.create_time,uwm.point,uwm.used_status,
+        uwm.create_time,uwm.point,uwm.used_status,uwm.last_edit_time,
         usered.user_id,usered.name,
         shop.shop_id,shop.shop_name,
-        award.award_id,award.award_name,
+        award.award_id,award.award_name,award.award_img,award.last_edit_time,award.award_desc,
         operator.user_id as operator_user_id,operator.name as operator_user_name
         FROM
         tb_user_award_map as uwm
@@ -143,6 +147,7 @@
         <result property="createTime" column="create_time"/>
         <result property="point" column="point"/>
         <result property="usedStatus" column="used_status"/>
+        <result property="lastEditTime" column="last_edit_time"/>
         <association property="user" column="user_id" javaType="com.ike.o2o.entity.PersonInfo">
             <id property="userId" column="user_id"/>
             <result property="name" column="name"/>
@@ -154,6 +159,9 @@
         <association property="award" column="award_id" javaType="com.ike.o2o.entity.Award">
             <id property="awardId" column="award_id"/>
             <result property="awardName" column="award_name"/>
+            <result property="awardImg" column="award_img"/>
+            <result property="lastEditTime" column="last_edit_time"/>
+            <result property="awardDesc" column="award_desc"/>
         </association>
         <association property="operator" column="operator_id" javaType="com.ike.o2o.entity.PersonInfo">
             <id property="userId" column="operator_user_id"/>

@@ -10,6 +10,8 @@ public class UserProductMap {
     private Integer point;
     //创建时间
     private Date createTime;
+    //修改时间
+    private Date lastEditTime;
     //顾客实体
     private PersonInfo user;
     //商品实体
@@ -25,6 +27,7 @@ public class UserProductMap {
                 "userProductId=" + userProductId +
                 ", point=" + point +
                 ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
                 ", user=" + user +
                 ", product=" + product +
                 ", shop=" + shop +
@@ -54,6 +57,14 @@ public class UserProductMap {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getLastEditTime() {
+        return lastEditTime;
+    }
+
+    public void setLastEditTime(Date lastEditTime) {
+        this.lastEditTime = lastEditTime;
     }
 
     public PersonInfo getUser() {

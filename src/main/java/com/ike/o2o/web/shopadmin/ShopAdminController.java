@@ -113,4 +113,5 @@ public class ShopAdminController {
     public String awarddetail() {
         return "shop/awarddetail";
     }
+
 }

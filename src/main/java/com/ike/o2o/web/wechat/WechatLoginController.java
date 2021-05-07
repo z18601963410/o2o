@@ -117,8 +117,10 @@ public class WechatLoginController {
         }
         // 若用户点击的是前端展示系统按钮则进入前端展示系统
         if (FRONTEND.equals(roleType)) {
+            //1 到首页
             return "frontend/index";
         } else {
+            //2 后台管理页面
             return "shop/shoplist";
         }
     }

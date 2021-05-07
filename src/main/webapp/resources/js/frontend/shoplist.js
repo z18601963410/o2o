@@ -103,7 +103,7 @@ $(function () {
                         + '</div>' + '</div>' + '</li>' + '</ul>'
                         + '</div>' + '</div>' + '<div class="card-footer">'
                         + '<p class="color-gray">'
-                        + new Date(item.lastEditTime).format("yyyy-MM-dd HH:mm:ss")
+                        + new Date(item.lastEditTime).format("yyyy-mm-dd")
                         + '更新</p>' + '<span>点击查看</span>' + '</div>'
                         + '</div>';
                 });

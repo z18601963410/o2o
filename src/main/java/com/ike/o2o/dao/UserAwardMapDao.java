@@ -54,8 +54,9 @@ public interface UserAwardMapDao {
 
     /**
      * 修改用户奖品映射对象
+     *
      * @param userAwardMap 实体
      * @return 受影响行数
      */
-    int updateUserAwardMap(UserAwardMap userAwardMap);
+    int updateUserAwardMap(@Param("userAwardMapCondition") UserAwardMap userAwardMap);
 }

@@ -13,4 +13,6 @@ public interface UserProductMapService {
      * @return dto
      */
     UserProductMapExecution getUserProductMap(UserProductMap userProductMap, Integer pageIndex, Integer pageSize);
+
+    UserProductMapExecution addUserProductMap(UserProductMap userProductMap);
 }

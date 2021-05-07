@@ -35,32 +35,33 @@ public class AwardServiceImpl implements AwardService {
      */
     @Override
     public AwardExecution queryAwardListByShop(Award awardCondition, Integer pageIndex, Integer pageSize) {
+        AwardExecution awardExecution = new AwardExecution();
         //非空判断
         if (awardCondition != null && pageIndex != null && pageSize != null) {
             //页码转为索引码
             int rowIndex = PageCalculator.calculateRowIndex(pageIndex, pageSize);
-            List<Award> awardList;
-            int count = -1;
+
             try {
                 //获取对象列表
-                awardList = awardDao.queryAward(awardCondition, rowIndex, pageSize);
+                List<Award> awardList = awardDao.queryAward(awardCondition, rowIndex, pageSize);
                 //获取长度
-                count = awardDao.queryAwardCount(awardCondition);
+                int count = awardDao.queryAwardCount(awardCondition);
+
+                awardExecution.setAwardList(awardList);
+                awardExecution.setCount(count);
+                //成功标志
+                awardExecution.setState(AwardStateEnum.SUCCESS.getState());
+                //返回DTO
+                return awardExecution;
 
             } catch (Exception e) {
                 logger.error("获取奖品列表或获取列表对象长度出现异常!:" + e.getMessage());
                 throw new AwardOperationException(e.getMessage());
             }
-            //封装数据
-            AwardExecution awardExecution = new AwardExecution();
-            awardExecution.setAwardList(awardList);
-            awardExecution.setCount(count);
-            //成功标志
-            awardExecution.setState(AwardStateEnum.SUCCESS.getState());
-            //返回DTO
-            return awardExecution;
+
         }
-        return new AwardExecution();
+        awardExecution.setState(AwardStateEnum.INNER_ERROR.getState());
+        return awardExecution;
     }
 
     @Override

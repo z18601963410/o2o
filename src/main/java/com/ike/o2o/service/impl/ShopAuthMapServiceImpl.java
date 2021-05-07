@@ -17,6 +17,12 @@ public class ShopAuthMapServiceImpl implements ShopAuthMapService {
     @Autowired
     ShopAuthMapDao shopAuthMapDao;
 
+    /**
+     * 新增店铺授权
+     * @param shopAuthMap 授权对象实体
+     * @return
+     * @throws ShopAuthMapOperationException
+     */
     @Override
     public ShopAuthMapExecution addShopAuthMap(ShopAuthMap shopAuthMap) throws ShopAuthMapOperationException {
         //非空判断

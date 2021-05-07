@@ -1,8 +1,10 @@
 package com.ike.o2o.service.impl;
 
+import com.ike.o2o.dao.ShopAuthMapDao;
 import com.ike.o2o.dao.ShopDao;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.Shop;
+import com.ike.o2o.entity.ShopAuthMap;
 import com.ike.o2o.enums.ShopStateEnum;
 import com.ike.o2o.exception.ShopOperationException;
 import com.ike.o2o.service.ShopService;
@@ -23,6 +25,8 @@ import java.util.List;
 public class ShopServiceImpl implements ShopService {
     @Autowired
     private ShopDao shopDao;
+    @Autowired
+    private ShopAuthMapDao shopAuthMapDao;
 
     @Override
     public Shop getByShopId(Long shopId) {
@@ -87,6 +91,16 @@ public class ShopServiceImpl implements ShopService {
                     addShopImg(shop, shopImgInputStream, fileName);
                 }
                 shopDao.updateShop(shop);
+                //添加店铺授权信息
+                ShopAuthMap shopAuthMap = new ShopAuthMap();
+                shopAuthMap.setCreateTime(new Date());
+                shopAuthMap.setLastEditTime(new Date());
+                shopAuthMap.setTitleFlag(0);
+                shopAuthMap.setTitle("店家");
+                shopAuthMap.setEnableStatus(1);
+                shopAuthMap.setShop(shop);
+                shopAuthMap.setEmployee(shop.getOwner());
+                shopAuthMapDao.insertShopAuth(shopAuthMap);
             }
         } catch (Exception e) {
             throw new ShopOperationException("addShop error:" + e.getMessage());

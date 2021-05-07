@@ -8,6 +8,8 @@ public class UserShopMap {
     private Long userShopId;
     //创建时间
     private Date createTime;
+    //修改时间
+    private Date lastEditTime;
     //顾客在该店铺的积分
     private Integer point;
     //顾客实体
@@ -20,6 +22,7 @@ public class UserShopMap {
         return "UserShopMap{" +
                 "userShopId=" + userShopId +
                 ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
                 ", point=" + point +
                 ", user=" + user +
                 ", shop=" + shop +
@@ -40,6 +43,14 @@ public class UserShopMap {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getLastEditTime() {
+        return lastEditTime;
+    }
+
+    public void setLastEditTime(Date lastEditTime) {
+        this.lastEditTime = lastEditTime;
     }
 
     public Integer getPoint() {

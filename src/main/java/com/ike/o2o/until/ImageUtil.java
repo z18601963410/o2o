@@ -20,7 +20,7 @@ import java.util.Random;
 
 public class ImageUtil {
     //private static String basePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-    private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private static final SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     private static final Random r = new Random();
     private static final Logger logger = LoggerFactory.getLogger(ImageUtil.class);
 

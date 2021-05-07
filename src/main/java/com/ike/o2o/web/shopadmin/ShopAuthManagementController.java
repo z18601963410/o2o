@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -95,6 +96,9 @@ public class ShopAuthManagementController {
             shopAuthMap.setEmployee(user);
             shopAuthMap.setTitle("员工");
             shopAuthMap.setTitleFlag(1);
+            shopAuthMap.setEnableStatus(1);
+            shopAuthMap.setCreateTime(new Date());
+            shopAuthMap.setLastEditTime(new Date());
             try {
                 //注册权限
                 ShopAuthMapExecution se = shopAuthMapService.addShopAuthMap(shopAuthMap);

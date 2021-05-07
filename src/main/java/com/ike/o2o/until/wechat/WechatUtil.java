@@ -12,10 +12,14 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.servlet.http.HttpServletRequest;
 
 import com.ike.o2o.dto.UserAccessToken;
 import com.ike.o2o.dto.WechatUser;
 import com.ike.o2o.entity.PersonInfo;
+import com.ike.o2o.entity.WechatAuth;
+import com.ike.o2o.service.WechatAuthService;
+import com.ike.o2o.service.impl.WechatAuthServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -135,7 +139,7 @@ public class WechatUtil {
      */
     public static String httpsRequest(String requestUrl, String requestMethod, String outputStr) {
         StringBuffer buffer = new StringBuffer();
-            try {
+        try {
             // 创建SSLContext对象，并使用我们指定的信任管理器初始化
             TrustManager[] tm = {new MyX509TrustManager()};
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
@@ -187,4 +191,5 @@ public class WechatUtil {
         }
         return buffer.toString();
     }
+
 }

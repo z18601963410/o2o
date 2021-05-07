@@ -8,6 +8,8 @@ public class UserAwardMap {
     private Long userAwardId;
     //创建时间
     private Date createTime;
+    //修改时间
+    private Date lastEditTime;
     //领取奖品所消耗的积分
     private Integer point;
     //状态 0未兑换,1已兑换
@@ -27,6 +29,7 @@ public class UserAwardMap {
         return "UserAwardMap{" +
                 "userAwardId=" + userAwardId +
                 ", createTime=" + createTime +
+                ", lastEditTime=" + lastEditTime +
                 ", point=" + point +
                 ", usedStatus=" + usedStatus +
                 ", user=" + user +
@@ -50,6 +53,14 @@ public class UserAwardMap {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public Date getLastEditTime() {
+        return lastEditTime;
+    }
+
+    public void setLastEditTime(Date lastEditTime) {
+        this.lastEditTime = lastEditTime;
     }
 
     public Integer getPoint() {

@@ -70,9 +70,9 @@ public class UserShopMapDaoTest extends BaseTest {
         UserShopMap userShopMap = new UserShopMap();
         userShopMap.setUserShopId(3L);
         userShopMap.setPoint(99999);
-        PersonInfo personInfo=new PersonInfo();
+        PersonInfo personInfo = new PersonInfo();
         personInfo.setUserId(27L);
-        Shop shop=new Shop();
+        Shop shop = new Shop();
         shop.setShopId(15L);
         userShopMap.setUser(personInfo);
         userShopMap.setShop(shop);
@@ -82,9 +82,19 @@ public class UserShopMapDaoTest extends BaseTest {
     @Test
     public void testC_selectAll() {
         UserShopMap userShopMap = new UserShopMap();
-        userShopMap.setPoint(1000);
+
+        PersonInfo user = new PersonInfo();
+        user.setUserId(1L);
+
+        userShopMap.setUser(user);
+
         List<UserShopMap> userShopMapList = userShopMapDao.queryUserShopList(userShopMap, 0, 999);
-        assertEquals(userShopMapList.size(), 2);
+
+
+        for (UserShopMap temp : userShopMapList
+        ) {
+            System.out.println(temp.getUser().getUserId() + ":---:" + temp.getPoint());
+        }
     }
 
     @Test
@@ -102,10 +112,22 @@ public class UserShopMapDaoTest extends BaseTest {
     }
 
     @Test
-    public void test(){
+    public void test() {
         List<UserShopMap> userShopMapList = userShopMapDao.queryUserShopList(null, 0, 999);
-        for (int i = 0; i <userShopMapList.size() ; i++) {
-            System.out.println("create_time:"+userShopMapList.get(i).getCreateTime());
+        for (int i = 0; i < userShopMapList.size(); i++) {
+            System.out.println("create_time:" + userShopMapList.get(i).getCreateTime());
         }
+    }
+
+    @Test
+    public void testF_queryAllPointByUserId() {
+        int pointCalculate = userShopMapDao.queryAllPointByUserId(1L);
+        System.out.println(pointCalculate);
+    }
+
+    @Test
+    public void testG_queryUserShopByUserId() {
+
+
     }
 }

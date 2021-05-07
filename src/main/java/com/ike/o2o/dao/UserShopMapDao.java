@@ -32,7 +32,7 @@ public interface UserShopMapDao {
      * @param shopId shopId
      * @return 符合条件的映射对象
      */
-    UserShopMap queryUserShopMapById(@Param("userId") long userId, @Param("shopId") long shopId);
+    UserShopMap queryUserShopMapById(@Param("userId") Long userId, @Param("shopId") Long shopId);
 
     /**
      * 插入userShopMap
@@ -50,4 +50,11 @@ public interface UserShopMapDao {
      */
     int updateUserShopMap(UserShopMap userShopMap);
 
+    /**
+     * 查询指定ID顾客的积分信息
+     *
+     * @param userId 顾客ID
+     * @return 顾客所有积分
+     */
+    int queryAllPointByUserId(long userId);
 }
