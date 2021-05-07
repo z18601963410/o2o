@@ -73,7 +73,7 @@ public class JedisUtil {
      *
      * @param key
      * @param seconds
-     * @author xiangze
+     * @author ike
      */
     public void expire(String key, int seconds) {
         if (seconds <= 0) {

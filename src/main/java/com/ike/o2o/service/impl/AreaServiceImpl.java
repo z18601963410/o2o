@@ -63,7 +63,8 @@ public class AreaServiceImpl implements AreaService {
                 throw new AreaOperationException(e.getMessage());
             }
             //将数据插入到redis中 key=AREA_LIST_KEY
-            jedisStrings.set(key, jsonString);
+            jedisStrings.setEx(key, 1000, jsonString);
+
         } else {
             //若key存在,则直接从redis中提取数据
             String jsonString = jedisStrings.get(key);

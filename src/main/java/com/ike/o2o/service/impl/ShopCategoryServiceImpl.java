@@ -75,7 +75,7 @@ public class ShopCategoryServiceImpl implements ShopCategoryService {
                 //数据转换
                 String listToString = objectMapper.writeValueAsString(shopCategoryList);
                 //保存到redis中
-                jedisStrings.set(key, listToString);
+                jedisStrings.setEx(key,1000,listToString);
                 //返回数据
                 return new ShopCategoryExecution(ShopCategoryStateEnum.SUCCESS, shopCategoryList);
             } catch (Exception e) {
