@@ -1,5 +1,6 @@
 package com.ike.o2o.dao;
 
+import com.ike.o2o.dao.split.DynamicDataSourceHolder;
 import com.ike.o2o.entity.Award;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -9,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.validation.constraints.AssertTrue;
 import java.util.Date;
 import java.util.List;
 
@@ -85,7 +85,7 @@ public class AwardDaoTest {
         award.setAwardId(4L);
         award.setAwardDesc("我修改了商品描述");
         int affect = awardDao.updateAward(award);
-        assertEquals(affect, 1);
+        System.out.println("数据源类型:"+DynamicDataSourceHolder.getDbType().toString());
     }
 
     @Test

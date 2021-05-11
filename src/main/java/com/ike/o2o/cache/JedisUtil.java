@@ -4,11 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.SortingParams;
-import redis.clients.util.SafeEncoder;
+import redis.clients.jedis.util.SafeEncoder;
+
 
 public class JedisUtil {
     /**
@@ -1019,19 +1019,19 @@ public class JedisUtil {
          * 在value的相对位置插入记录
          *
          * @param key
-         * @param
+         * @param where
          * @param pivot 相对位置的内容
          * @param value 插入的内容
          * @return 记录总数
          */
-        public long linsert(String key, LIST_POSITION where, String pivot, String value) {
+        public long linsert(String key, redis.clients.jedis.ListPosition where, String pivot, String value) {
             return linsert(SafeEncoder.encode(key), where, SafeEncoder.encode(pivot), SafeEncoder.encode(value));
         }
 
         /**
          * 在指定位置插入记录
          */
-        public long linsert(byte[] key, LIST_POSITION where, byte[] pivot, byte[] value) {
+        public long linsert(byte[] key, redis.clients.jedis.ListPosition where, byte[] pivot, byte[] value) {
             Jedis jedis = getJedis();
             long count = jedis.linsert(key, where, pivot, value);
             jedis.close();

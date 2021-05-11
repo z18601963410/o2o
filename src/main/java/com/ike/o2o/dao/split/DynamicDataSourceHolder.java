@@ -3,10 +3,12 @@ package com.ike.o2o.dao.split;
 import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 返回需要采用的数据源信息
  */
+@Configuration
 public class DynamicDataSourceHolder {
     //记录日志
     private static Logger logger = LoggerFactory.getLogger(DynamicDataSourceHolder.class);
@@ -15,18 +17,21 @@ public class DynamicDataSourceHolder {
     private static ThreadLocal<String> contextHolder = new ThreadLocal<>();
 
     //主从库 数据源
-    static final String DB_MASTER = "master";
-    static final String DB_SLAVE = "slave";
+    public static final String DB_MASTER = "master";
+    public static final String DB_SLAVE = "slave";
 
 
-    static Object getDbType() {
+    public static Object getDbType() {
         //获取数据库数据源
         String db = contextHolder.get();
+        /*
         if (db == null) {
             db = DB_MASTER;
         }
+        */
         return db;
     }
+
 
     /**
      * 设置线程的DBType

@@ -1,39 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 动态加载配置文件，感知到xml修改后自动加载配置文件 -->
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
     <!-- 定义参数常量 -->
-    <!-- TRACE<DEBUG<INFO<WARN<ERROR -->
+    <!-- 日志级别由小到大 TRACE<DEBUG<INFO<WARN<ERROR -->
     <!-- logger.trace("msg") logger.debug... -->
     <property name="log.level" value="debug" />
     <property name="log.maxHistory" value="30" />
     <property name="log.filePath" value="${catalina.base}/logs/webapps" />
-    <property name="log.pattern"
-              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+    <property name="log.pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n" />
+
+
     <!-- 控制台设置 -->
     <appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- encoder按照指定格式将日志文件进行输出 -->
         <encoder>
             <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
+
+
     <!-- DEBUG -->
     <appender name="debugAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <!-- 文件路径 -->
+        <!-- 文件路径 debug.log存储满了之后分裂其他文件进行存储>>rollingPolicy -->
         <file>${log.filePath}/debug.log</file>
+        <!-- 滚动策略  -->
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- 文件名称 -->
-            <fileNamePattern>${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.gz
-            </fileNamePattern>
+            <fileNamePattern>${log.filePath}/debug/debug.%d{yyyy-MM-dd}.log.gz</fileNamePattern>
             <!-- 文件最大保存历史数量 -->
             <maxHistory>${log.maxHistory}</maxHistory>
         </rollingPolicy>
         <encoder>
+            <!-- encoder按照指定格式将日志文件进行输出 -->
             <pattern>${log.pattern}</pattern>
         </encoder>
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <!-- 过滤日志 -->
             <level>DEBUG</level>
+            <!-- 记录debug级别日志 -->
             <onMatch>ACCEPT</onMatch>
+            <!-- 忽略非debug级别日志 -->
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
+
+
     <!-- INFO -->
     <appender name="infoAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 -->
@@ -54,6 +65,8 @@
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
+
+
     <!-- ERROR -->
     <appender name="errorAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <!-- 文件路径 -->
@@ -74,11 +87,14 @@
             <onMismatch>DENY</onMismatch>
         </filter>
     </appender>
-    <logger name="com.imooc.o2o" level="${log.level}" additivity="true">
+
+    <!-- name日志作用域（整个工程）； level级别（此处为debug）；additivity是否将root中appender引入进来 -->
+    <logger name="com.ike.o2o" level="${log.level}" additivity="true">
         <appender-ref ref="debugAppender"/>
         <appender-ref ref="infoAppender"/>
         <appender-ref ref="errorAppender"/>
     </logger>
+    <!-- 如果logger没有指定则默认按照root进行日志的输出 -->
     <root level="info">
         <appender-ref ref="consoleAppender"/>
     </root>

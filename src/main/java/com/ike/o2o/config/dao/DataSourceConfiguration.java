@@ -1,70 +1,84 @@
 package com.ike.o2o.config.dao;
 
-import com.ike.o2o.until.DESUtil;
-import com.ike.o2o.until.MD5;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.ike.o2o.dao.split.DynamicDataSourceHolder;
 import org.mybatis.spring.annotation.MapperScan;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-import java.beans.PropertyVetoException;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
- * 数据库连接池
+ * 数据库连接池C3P0   @MapperScan 扫描dao包
  */
-@Configuration //Bean的来源,避免多例
-@MapperScan("com.ike.o2o.dao")//描定义包下的所有的接口,并生成对应的bean对象
+@Configuration
+@MapperScan("com.ike.o2o.dao")
 public class DataSourceConfiguration {
-    @Value("${jdbc.driver}")//数据库驱动
-    private String jdbcDriver;
 
-    @Value("${jdbc.master.url}")//主数据库url
-    private String jdbcMasterUrl;
-
-    @Value("${jdbc.slave.url}")//从数据库url
-    private String jdbcSlaveUrl;
-
-    @Value("${jdbc.username}")//数据库用户名
-    private String jdbcUsername;
-
-    @Value("${jdbc.password}")//数据库密码
-    private String jdbcPassword;
+    //数据源Map
+    private Map<Object, Object> DataSourceMap = new HashMap<>();
 
     /**
-     * 生成一个dataSource(数据库连接池)交由Spring管理
+     * 构造函数注入数据库对象
      *
-     * @return 数据库连接池对象
+     * @param masterDataSource 主库  与beanName相同
+     * @param slave1           从库1 与beanName相同
+     */
+    @Autowired
+    public DataSourceConfiguration(DataSource masterDataSource, DataSource slave1) {
+        //主库配置
+        this.DataSourceMap.put(DynamicDataSourceHolder.DB_MASTER, masterDataSource);
+        //从库:多数据源配置. key与value(数据源对象)关联>>动态数据源根据获得的KEY选择对应的数据源对象
+        this.DataSourceMap.put(DynamicDataSourceHolder.DB_SLAVE, slave1);
+    }
+
+
+    /**
+     * 数据源路由
+     * <p>
+     * 工作过程概述: 动态数据源对象的getDbType()方法从线程中获取key值,匹配对应的数据源对象(数据源对象包含在一个Map中)
+     * 动态数据源对象配置一个Map,map的key用于数据源的匹配,value则是数据源对象
+     * <p>
+     * 需要动态数据源对象
+     *
+     * @return AbstractRoutingDataSource
+     */
+    @Bean(name="dynamicDataSource")
+    public AbstractRoutingDataSource getDynamicDataSource() {
+        //动态数据源对象
+        AbstractRoutingDataSource dynamicDataSource = new AbstractRoutingDataSource() {
+            @Override
+            protected Object determineCurrentLookupKey() {
+                //动态数据源执行该方法获取数据源对应的key>>该key由mybatis拦截器设置在ThreadLocal<String> contextHolder中
+                //拦截器对象会在SQL执行前对其拦截和解析,根据解析结果选择需要的数据源KEY配置到线程变量中
+                return DynamicDataSourceHolder.getDbType();
+            }
+        };
+        //设置默认数据源
+        dynamicDataSource.setDefaultTargetDataSource(DataSourceMap.get(DynamicDataSourceHolder.DB_MASTER));
+        //将数据源列表配置到动态数据源对象中
+        dynamicDataSource.setTargetDataSources(DataSourceMap);
+        //返回动态数据源对象
+        return dynamicDataSource;
+    }
+
+    /**
+     * 数据源(使用动态数据源对象)
+     *
+     * @return 延迟加载数据源
      */
     @Bean(name = "dataSource")
-    public ComboPooledDataSource createDataSource() throws PropertyVetoException {
-        //数据库连接池对象c3p0
-        ComboPooledDataSource comboPooledDataSource = new ComboPooledDataSource();
-
-        //数据库驱动程序
-        comboPooledDataSource.setDriverClass(jdbcDriver);
-        //数据库URL
-        comboPooledDataSource.setJdbcUrl(jdbcMasterUrl);
-        //数据库username
-        comboPooledDataSource.setUser(DESUtil.getDecryptString(jdbcUsername));
-        //数据库密码
-        comboPooledDataSource.setPassword(DESUtil.getDecryptString(jdbcPassword));
-
-        //配置c3p0连接池私有属性
-        //最大线程数
-        comboPooledDataSource.setMaxPoolSize(30);
-        //最小线程数
-        comboPooledDataSource.setMinPoolSize(10);
-
-        comboPooledDataSource.setInitialPoolSize(10);
-        //关闭连接后不自动commit
-        comboPooledDataSource.setAutoCommitOnClose(false);
-        //连接超时时间
-        comboPooledDataSource.setCheckoutTimeout(10000);
-        //连接失败重试次数
-        comboPooledDataSource.setAcquireRetryAttempts(2);
-
-        //返回数据库连接池
-        return comboPooledDataSource;
+    public LazyConnectionDataSourceProxy getLazyConnectionDataSourceProxy(AbstractRoutingDataSource dynamicDataSource) {
+        //数据源代理对象
+        LazyConnectionDataSourceProxy lazyConnectionDataSourceProxy = new LazyConnectionDataSourceProxy();
+        //配置数据源
+        lazyConnectionDataSourceProxy.setTargetDataSource(dynamicDataSource);
+        //返回数据源
+        return lazyConnectionDataSourceProxy;
     }
+
 }
