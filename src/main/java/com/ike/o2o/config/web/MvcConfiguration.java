@@ -3,9 +3,7 @@ package com.ike.o2o.config.web;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.ike.o2o.interceptor.shopadmin.ShopLoginInterceptor;
 import com.ike.o2o.interceptor.shopadmin.ShopPermissionInterceptor;
-import org.apache.catalina.servlets.DefaultServlet;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.ApplicationContext;
@@ -18,7 +16,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.*;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
-import javax.servlet.ServletException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +25,7 @@ import java.util.List;
  */
 @Configuration
 @EnableWebMvc //开启SpringMVC注解模式  等效于:<mvc:annotation-driven/>
-public class MvcConfiguration extends WebMvcConfigurerAdapter implements ApplicationContextAware {
+public class MvcConfiguration implements ApplicationContextAware, WebMvcConfigurer {
 
     private static String resourceLocationsOfWin;
 
@@ -67,9 +64,6 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter implements Applica
         } else {
             registry.addResourceHandler("/upload/**").addResourceLocations("file:" + resourceLocationsOfOS.trim() + "/upload/");
         }
-        //原代码 默认os
-        //registry.addResourceHandler("/upload/**").addResourceLocations("file:/Users/baidu/work/image/upload/");
-
     }
 
     /**
@@ -148,12 +142,11 @@ public class MvcConfiguration extends WebMvcConfigurerAdapter implements Applica
      * KaptchaServlet servlet 返回处理验证码处理
      *
      * @return ServletRegistrationBean
-     * @throws ServletException 异常
      */
     @Bean
-    public ServletRegistrationBean servletRegistrationBean() throws ServletException {
+    public ServletRegistrationBean servletRegistrationBean() {
         //捕获对/Kaptcha的请求,并注册一个servlet返回
-        ServletRegistrationBean servlet = new ServletRegistrationBean(new KaptchaServlet(), "/Kaptcha");
+        ServletRegistrationBean<KaptchaServlet> servlet = new ServletRegistrationBean<>(new KaptchaServlet(), "/Kaptcha");
         //设置servlet属性
         servlet.addInitParameter("kaptcha.border", kaptcha_border);
         servlet.addInitParameter("kaptcha.textproducer.font.color", kaptcha_textproducer_font_color);

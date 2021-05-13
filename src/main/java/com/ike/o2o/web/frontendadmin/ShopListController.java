@@ -151,7 +151,7 @@ public class ShopListController {
         //查询某个区域下的所有店铺
         if (areaId != -1) {
             Area area = new Area();
-            area.setAreaID(areaId);
+            area.setAreaId(areaId);
             shopCondition.setArea(area);
         }
         //根据名称模糊查找店铺

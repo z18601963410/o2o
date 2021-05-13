@@ -6,4 +6,31 @@
         from tb_area
         order by priority desc
     </select>
+    <insert id="insertArea" parameterType="com.ike.o2o.entity.Area">
+        insert into tb_area(area_name, priority, create_time, last_edit_time)
+        value (
+        #{areaName},
+        #{priority},
+        #{createTime},
+        #{lastEditTime}
+        )
+    </insert>
+    <update id="updateArea">
+        update tb_area
+        <set>
+            <if test="areaCondition != null and areaCondition.areaName !=null ">
+                area_name=#{areaCondition.areaName}
+            </if>
+            <if test="areaCondition != null and areaCondition.priority !=null ">
+                , priority=#{areaCondition.priority}
+            </if>
+            <if test="areaCondition != null and areaCondition.lastEditTime !=null ">
+                , last_edit_time=#{areaCondition.lastEditTime}
+            </if>
+        </set>
+        where area_id = #{areaCondition.areaId}
+    </update>
+    <delete id="deleteArea" parameterType="long">
+        delete from tb_area where area_id =#{areaId}
+    </delete>
 </mapper>

@@ -32,7 +32,7 @@ public class Area {
         return areaId;
     }
 
-    public void setAreaID(Integer areaId) {
+    public void setAreaId(Integer areaId) {
         this.areaId = areaId;
     }
 
@@ -64,7 +64,7 @@ public class Area {
         return lastEditTime;
     }
 
-    public void setLastEditTime(Date updateTime) {
+    public void setLastEditTime(Date lastEditTime) {
         this.lastEditTime = lastEditTime;
     }
 }
