@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -89,4 +90,34 @@ public class AreaServiceImpl implements AreaService {
         }
         return areaList;
     }
+
+
+    @Override
+    @Transactional
+    public boolean editArea(Area area) {
+        if (area != null && area.getAreaId() != null) {
+            int affect = areaDao.updateArea(area);
+            //清除缓存
+            jedisKeys.del(AREA_LIST_KEY);
+            return affect > 0;
+        }
+        return false;
+    }
+
+    @Override
+    @Transactional
+    public boolean addArea(Area area) {
+        if (area != null) {
+            //初始化参数
+            area.setCreateTime(new Date());
+            area.setLastEditTime(new Date());
+            int affect = areaDao.insertArea(area);
+            //清除缓存
+            jedisKeys.del(AREA_LIST_KEY);
+            return affect > 0;
+        }
+        return true;
+    }
+
+
 }

@@ -1,3 +1,4 @@
+
 Date.prototype.Format = function(fmt) {
 	var o = {
 		"M+" : this.getMonth() + 1, // 月份
@@ -18,6 +19,7 @@ Date.prototype.Format = function(fmt) {
 					: (("00" + o[k]).substr(("" + o[k]).length)));
 	return fmt;
 }
+
 /**
  * 
  */

@@ -33,7 +33,7 @@ function doLogin() {
 		cache : false,
 		type : "post",
 		dataType : 'json',
-		url : "logincheck",// 请求的action路径
+		url : '/o2o/local/logincheck',// 请求的action路径
 		data : {
 			userName : $("#userName").val(),
 			password : $("#password").val()

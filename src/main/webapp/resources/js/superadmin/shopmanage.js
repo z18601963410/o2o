@@ -382,8 +382,8 @@ function shopManagementEdit() {
 	shop.priority = encodeURIComponent($("#shopManagementEdit_priority").val());
 	shop.enableStatus = encodeURIComponent($("#shopManagementEdit_enableStatus")
 			.val());
-	shop.advice = '"'
-			+ encodeURIComponent($("#shopManagementEdit_advice").val()) + '"';
+	shop.advice = ''
+			+ encodeURIComponent($("#shopManagementEdit_advice").val()) + '';
 	$.ajax({
 		async : false,
 		cache : false,

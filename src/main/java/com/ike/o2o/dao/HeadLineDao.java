@@ -46,7 +46,7 @@ public interface HeadLineDao {
      * @param headLineCondition 包含条件的头条对象 头条名模糊查询 和 状态查询
      * @return 头条列表
      */
-    List<HeadLine> selectHeadLineList(HeadLine headLineCondition);
+    List<HeadLine> queryHeadLineList(HeadLine headLineCondition);
 
     /**
      * 根据头条ID查询对象
@@ -54,7 +54,7 @@ public interface HeadLineDao {
      * @param headLineId 头条ID
      * @return 头条对象
      */
-    HeadLine selectHeadLineByHeadLineId(long headLineId);
+    HeadLine queryHeadLineByHeadLineId(long headLineId);
 
     /**
      * 根据头条ID集合查询对应头条集合
@@ -62,5 +62,12 @@ public interface HeadLineDao {
      * @param headLineIdList 头条ID集合
      * @return 头条对象集合
      */
-    List<HeadLine> selectHeadLineByHeadLineIdList(List<Long> headLineIdList);
+    List<HeadLine> queryHeadLineByHeadLineIdList(List<Long> headLineIdList);
+
+    /**
+     * 查询头条长度
+     * @param headLineCondition  查询条件
+     * @return count
+     */
+    int queryHeadLineListCount(HeadLine headLineCondition);
 }

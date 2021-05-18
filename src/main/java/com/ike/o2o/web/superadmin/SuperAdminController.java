@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * 超级管理员控制器路由
  */
 @Controller
-@RequestMapping(value = "/superAdmin", method = {RequestMethod.GET, RequestMethod.POST})
+@RequestMapping(value = "/superadmin", method = {RequestMethod.GET, RequestMethod.POST})
 public class SuperAdminController {
 
     @RequestMapping(value = "/areamanage")

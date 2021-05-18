@@ -8,7 +8,7 @@
     line_img
     priority
     enable_status
-    creat_time
+    create_time
     last_edit_time
     -->
     <insert id="insertHeadLine" parameterType="com.ike.o2o.entity.HeadLine" useGeneratedKeys="true"
@@ -20,7 +20,7 @@
         line_img,
         priority,
         enable_status,
-        creat_time,
+        create_time,
         last_edit_time
         )
         VALUES
@@ -42,7 +42,7 @@
         line_img,
         priority,
         enable_status,
-        creat_time,
+        create_time,
         last_edit_time
         )
         VALUES
@@ -74,7 +74,7 @@
             enable_status=#{headLineParam.enableStatus},
         </if>
         <if test="headLineParam != null and headLineParam.createTime != null">
-            creat_time=#{headLineParam.createTime},
+            create_time=#{headLineParam.createTime},
         </if>
         <if test="headLineParam != null and headLineParam.lastEditTime != null">
             last_edit_time=#{headLineParam.lastEditTime},
@@ -91,7 +91,7 @@
       WHERE
       line_id=#{headLineId}
     </delete>
-    <select id="selectHeadLineList" parameterType="com.ike.o2o.entity.HeadLine"
+    <select id="queryHeadLineList" parameterType="com.ike.o2o.entity.HeadLine"
             resultType="com.ike.o2o.entity.HeadLine">
         SELECT
         line_id,
@@ -100,7 +100,7 @@
         line_img,
         priority,
         enable_status,
-        creat_time,
+        create_time,
         last_edit_time
         FROM
         tb_head_line
@@ -113,7 +113,7 @@
             </if>
         </where>
     </select>
-    <select id="selectHeadLineByHeadLineId" parameterType="Long" resultType="com.ike.o2o.entity.HeadLine">
+    <select id="queryHeadLineByHeadLineId" parameterType="Long" resultType="com.ike.o2o.entity.HeadLine">
         SELECT
         line_id,
         line_name,
@@ -121,14 +121,14 @@
         line_img,
         priority,
         enable_status,
-        creat_time,
+        create_time,
         last_edit_time
         FROM
         tb_head_line
         WHERE
         line_id= #{headLineId}
     </select>
-    <select id="selectHeadLineByHeadLineIdList" parameterType="java.util.List" resultType="com.ike.o2o.entity.HeadLine">
+    <select id="queryHeadLineByHeadLineIdList" parameterType="java.util.List" resultType="com.ike.o2o.entity.HeadLine">
         SELECT
         line_id,
         line_name,
@@ -136,7 +136,7 @@
         line_img,
         priority,
         enable_status,
-        creat_time,
+        create_time,
         last_edit_time
         FROM
         tb_head_line
@@ -148,5 +148,20 @@
             #{item}
         </foreach>
         )
+    </select>
+    <select id="queryHeadLineListCount" parameterType="com.ike.o2o.entity.HeadLine"
+            resultType="int">
+        SELECT
+        COUNT(1)
+        FROM
+        tb_head_line
+        <where>
+            <if test="lineName != null"> <!-- ${lineName} -->
+                and line_name like '%${lineName}%'
+            </if>
+            <if test="enableStatus != null">
+                and enable_status=#{enableStatus}
+            </if>
+        </where>
     </select>
 </mapper>

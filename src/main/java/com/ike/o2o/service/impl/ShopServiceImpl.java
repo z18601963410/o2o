@@ -2,6 +2,7 @@ package com.ike.o2o.service.impl;
 
 import com.ike.o2o.dao.ShopAuthMapDao;
 import com.ike.o2o.dao.ShopDao;
+import com.ike.o2o.dto.ShopCategoryExecution;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.Shop;
 import com.ike.o2o.entity.ShopAuthMap;
@@ -109,6 +110,14 @@ public class ShopServiceImpl implements ShopService {
         return new ShopExecution(ShopStateEnum.CHECK, shop);
     }
 
+    /**
+     * 查询商铺列表
+     *
+     * @param shopCondition 查询条件
+     * @param pageIndex     页码
+     * @param pageSize      每页行数
+     * @return ShopExecution
+     */
     @Override
     public ShopExecution getShopList(Shop shopCondition, int pageIndex, int pageSize) {
         //获取分页码
@@ -124,6 +133,8 @@ public class ShopServiceImpl implements ShopService {
             se.setShopList(shopList);
             //将店铺总量封装到DTO对象中
             se.setCount(shopCount);
+            //设置状态
+            se.setState(ShopStateEnum.SUCCESS.getState());
         } else {
             //查询失败返回系统错误
             se.setState(ShopStateEnum.INNER_ERROR.getState());

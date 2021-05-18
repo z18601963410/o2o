@@ -37,7 +37,8 @@ public class HeadLineServiceImpl implements HeadLineService {
     @Autowired
     private JedisUtil.Strings jedisStrings;
     //redis存储头条数据的key值
-    private static String HEAD_LINE_KEY = "headlinekey";
+    private final static String HEAD_LINE_KEY = "headlinekey";
+
     //数据转换对象
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -58,6 +59,9 @@ public class HeadLineServiceImpl implements HeadLineService {
             try {
                 int affect = headLineDao.insertHeadLine(headLine);
                 if (affect > 0) {
+                    if (jedisKeys.exists(HEAD_LINE_KEY)) {
+                        jedisKeys.del(HEAD_LINE_KEY);
+                    }
                     return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLine);
                 } else {
                     throw new HeadLineOperationException("头条创建失败");
@@ -95,6 +99,9 @@ public class HeadLineServiceImpl implements HeadLineService {
                 try {
                     int affect = headLineDao.insertHeadLineList(tempList);
                     if (affect > 0) {
+                        if (jedisKeys.exists(HEAD_LINE_KEY)) {
+                            jedisKeys.del(HEAD_LINE_KEY);
+                        }
                         return new HeadLineExecution(HeadLineStateEnum.SUCCESS, tempList);
                     } else {
                         throw new HeadLineOperationException("头条批量插入失败");
@@ -117,15 +124,18 @@ public class HeadLineServiceImpl implements HeadLineService {
             if (headLineImage != null) {
                 long lineId = headLine.getLineId();
                 //删除已有图片
-                boolean isTrue = new File(PathUtil.getHeadLineImagePath() +
-                        queryHeadLineByHeadLineId(lineId).getHeadLine().getLineImg()).delete();
-                //重置图片地址
+                ImageUtil.deleteFileOrPath(queryHeadLineByHeadLineId(lineId).getHeadLine().getLineImg());
+                //获取新的图片路径
                 headLine.setLineImg(ImageUtil.generateNormalImg(headLineImage, PathUtil.getHeadLineImagePath()));
             }
             //更新图片信息
             try {
+                headLine.setLastEditTime(new Date());
                 int affect = headLineDao.updateHeadLine(headLine);
                 if (affect > 0) {
+                    if (jedisKeys.exists(HEAD_LINE_KEY)) {
+                        jedisKeys.del(HEAD_LINE_KEY);
+                    }
                     return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLine);
                 } else {
                     return new HeadLineExecution(HeadLineStateEnum.INNER_ERROR);
@@ -145,6 +155,9 @@ public class HeadLineServiceImpl implements HeadLineService {
             try {
                 int affect = headLineDao.deleteHeadLine(headLineId);
                 if (affect > 0) {
+                    if (jedisKeys.exists(HEAD_LINE_KEY)) {
+                        jedisKeys.del(HEAD_LINE_KEY);
+                    }
                     return new HeadLineExecution(HeadLineStateEnum.SUCCESS, new HeadLine());
                 } else {
                     throw new HeadLineOperationException("删除头条失败");
@@ -165,6 +178,7 @@ public class HeadLineServiceImpl implements HeadLineService {
             String key = HEAD_LINE_KEY;
             //封装数据
             List<HeadLine> headLineList;
+            HeadLineExecution headLineExecution = new HeadLineExecution();
             //headLineCondition对查询条件做了限定此处对key也要做限制
             if (headLineCondition.getEnableStatus() != null) {
                 //将key值附加上查询可用状态条件的限制: 0表示不可用,1表示可用 >HEAD_LINE_KEY_0
@@ -173,12 +187,15 @@ public class HeadLineServiceImpl implements HeadLineService {
             //判断redis是否存在该key  !jedisKeys.exists(key)  禁用redis
             if (!jedisKeys.exists(key)) {
                 //如果不存在key则从数据库提取数据
-                headLineList= headLineDao.selectHeadLineList(headLineCondition);
-
-                if (headLineList != null && headLineList.size() > 0) {
+                headLineList = headLineDao.queryHeadLineList(headLineCondition);
+                int count = headLineDao.queryHeadLineListCount(headLineCondition);
+                headLineExecution.setCount(count);
+                headLineExecution.setHeadLineList(headLineList);
+                //将数据存储到redis中
+                if (headLineExecution.getHeadLineList() != null && headLineExecution.getHeadLineList().size() > 0) {
                     try {
                         //将list转换为String
-                        String headLineListAsString = objectMapper.writeValueAsString(headLineList);
+                        String headLineListAsString = objectMapper.writeValueAsString(headLineExecution);
                         //保存到redis
                         jedisStrings.set(key, headLineListAsString);
 
@@ -189,7 +206,8 @@ public class HeadLineServiceImpl implements HeadLineService {
                         //返回异常,回滚数据
                         throw new HeadLineOperationException(e.getMessage());
                     }
-                    return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLineList);
+                    headLineExecution.setState(HeadLineStateEnum.SUCCESS.getState());
+                    return headLineExecution;
                 } else {
                     return new HeadLineExecution(HeadLineStateEnum.EMPTY);
                 }
@@ -197,17 +215,17 @@ public class HeadLineServiceImpl implements HeadLineService {
                 //如果查询key为true则从redis中提取数据
                 String jsonString = jedisStrings.get(key);
                 //数据转换
-                JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class, HeadLine.class);
+                //JavaType javaType = objectMapper.getTypeFactory().constructParametricType(ArrayList.class, HeadLineExecution.class);
                 try {
-                    headLineList= objectMapper.readValue(jsonString, javaType);
-                }catch (Exception e){
+                    headLineExecution = objectMapper.readValue(jsonString, HeadLineExecution.class);
+                } catch (Exception e) {
                     e.printStackTrace();
                     //记录错误日志
                     logger.error(e.getMessage());
                     //返回异常,回滚数据
                     throw new HeadLineOperationException(e.getMessage());
                 }
-                return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLineList);
+                return headLineExecution;
             }
         }
         return new HeadLineExecution(HeadLineStateEnum.EMPTY);
@@ -216,7 +234,7 @@ public class HeadLineServiceImpl implements HeadLineService {
     @Override
     public HeadLineExecution queryHeadLineByHeadLineId(long headLineId) {
         if (headLineId > 0) {
-            HeadLine headLine = headLineDao.selectHeadLineByHeadLineId(headLineId);
+            HeadLine headLine = headLineDao.queryHeadLineByHeadLineId(headLineId);
             if (headLine != null) {
                 return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLine);
             }
@@ -228,7 +246,7 @@ public class HeadLineServiceImpl implements HeadLineService {
     @Override
     public HeadLineExecution queryHeadLineByHeadLineIdList(List<Long> headLineIdList) {
         if (headLineIdList != null && headLineIdList.size() > 0) {
-            List<HeadLine> headLineList = headLineDao.selectHeadLineByHeadLineIdList(headLineIdList);
+            List<HeadLine> headLineList = headLineDao.queryHeadLineByHeadLineIdList(headLineIdList);
             if (headLineList != null && headLineList.size() > 0) {
                 return new HeadLineExecution(HeadLineStateEnum.SUCCESS, headLineList);
             }

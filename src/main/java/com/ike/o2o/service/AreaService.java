@@ -9,4 +9,8 @@ import java.util.List;
  */
 public interface AreaService {
     List<Area> getAreaList();
+
+    boolean editArea(Area area);
+
+    boolean addArea(Area area);
 }

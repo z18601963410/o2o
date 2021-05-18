@@ -3,6 +3,7 @@ package com.ike.o2o.config.web;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.ike.o2o.interceptor.shopadmin.ShopLoginInterceptor;
 import com.ike.o2o.interceptor.shopadmin.ShopPermissionInterceptor;
+import com.ike.o2o.interceptor.superadmin.SuperAdminLoginInterceptor;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
@@ -181,6 +182,12 @@ public class MvcConfiguration implements ApplicationContextAware, WebMvcConfigur
         permissionIR.addPathPatterns(interceptPath);
 
 
+        //超级管理员拦截器
+        InterceptorRegistration superLogin = registry.addInterceptor(new SuperAdminLoginInterceptor());
+        superLogin.addPathPatterns("/superadmin/**");
+        //添加放行路径
+        //superLogin.excludePathPatterns("/superadmin/login");
+
         //配置放行路径
         //放行列表
         List<String> excludePathPatternList = new ArrayList<>();
@@ -198,6 +205,10 @@ public class MvcConfiguration implements ApplicationContextAware, WebMvcConfigur
         excludePathPatternList.add("/shopAdmin/getShopManagementInfo");
         //配置放行列表
         permissionIR.excludePathPatterns(excludePathPatternList);
+        //配置放行列表(超管系统)
+        List<String> excludePathPatternListForSuperAdminLogin = new ArrayList<>();
+        excludePathPatternListForSuperAdminLogin.add("/superadmin/login");
+        superLogin.excludePathPatterns(excludePathPatternListForSuperAdminLogin);
     }
 
 }

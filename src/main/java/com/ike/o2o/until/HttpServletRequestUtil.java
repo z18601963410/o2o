@@ -1,9 +1,10 @@
 package com.ike.o2o.until;
 
 import javax.servlet.http.HttpServletRequest;
+import java.nio.charset.StandardCharsets;
 
 /**
- *请求过滤
+ * 请求过滤
  */
 public class HttpServletRequestUtil {
     public static int getInt(HttpServletRequest request, String key) {
@@ -42,7 +43,8 @@ public class HttpServletRequestUtil {
         try {
             String result = request.getParameter(key);
             if (result != null) {
-                result.trim();
+                //解码
+                result = java.net.URLDecoder.decode(result.trim(), "UTF-8");
             }
             if ("".equals(result)) {
                 return null;

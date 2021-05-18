@@ -4,7 +4,7 @@ $(function() {
 });
 function listAreaManagementInfo() {
 	$.ajax({
-		url : "listarea",
+		url : "/o2o/superadmin/listAreaManagementInfo",
 		type : "get",
 		dataType : 'json',
 		success : function(data) {
