@@ -2,11 +2,11 @@ package com.ike.o2o.service.impl;
 
 import com.ike.o2o.dao.ShopAuthMapDao;
 import com.ike.o2o.dao.ShopDao;
-import com.ike.o2o.dto.ShopCategoryExecution;
 import com.ike.o2o.dto.ShopExecution;
 import com.ike.o2o.entity.Shop;
 import com.ike.o2o.entity.ShopAuthMap;
 import com.ike.o2o.enums.ShopStateEnum;
+import com.ike.o2o.exception.ShopAuthMapOperationException;
 import com.ike.o2o.exception.ShopOperationException;
 import com.ike.o2o.service.ShopService;
 import com.ike.o2o.until.ImageUtil;
@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
@@ -24,6 +23,7 @@ import java.util.List;
 
 @Service
 public class ShopServiceImpl implements ShopService {
+    private org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(ShopServiceImpl.class);
     @Autowired
     private ShopDao shopDao;
     @Autowired
@@ -101,7 +101,15 @@ public class ShopServiceImpl implements ShopService {
                 shopAuthMap.setEnableStatus(1);
                 shopAuthMap.setShop(shop);
                 shopAuthMap.setEmployee(shop.getOwner());
-                shopAuthMapDao.insertShopAuth(shopAuthMap);
+                try {
+                    int affect = shopAuthMapDao.insertShopAuth(shopAuthMap);
+                    if (!(affect > 0)) {
+                        throw new ShopAuthMapOperationException("授权对象添加失败:affect>0=false");
+                    }
+                } catch (Exception e) {
+                    logger.error("授权对象添加失败");
+                    throw new ShopAuthMapOperationException("授权对象添加失败:" + e.getMessage());
+                }
             }
         } catch (Exception e) {
             throw new ShopOperationException("addShop error:" + e.getMessage());
