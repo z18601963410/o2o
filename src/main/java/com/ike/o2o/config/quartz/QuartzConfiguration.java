@@ -1,18 +1,17 @@
 package com.ike.o2o.config.quartz;
 
-import com.ike.o2o.service.ProductSellDailyService;
-import com.ike.o2o.service.impl.ProductSellDailyServiceImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
-import org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 /**
+ * 定时任务调度工厂对象
+ *
  * 可以使用 @EnableScheduling @Scheduled(cron = "0 0/1 * * * ?")代替
  * 定时任务工具 : 统计商品销售情况
  * <p>

@@ -20,6 +20,9 @@ import static junit.framework.TestCase.assertEquals;
 @SpringBootTest
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class AreaDaoTest {
+
+    //测试回环
+
     @Autowired
     private AreaDao areaDao;
 

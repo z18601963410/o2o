@@ -29,7 +29,7 @@ public class ProductSellDailyServiceImpl implements ProductSellDailyService {
         this.productSellDailyDao = productSellDailyDao;
     }
 
-    //@Scheduled(cron = "0 0 1 * * ?")//配置为定时任务,spring会自动发现该任务
+    //@Scheduled(cron = "0 * * * * ?")//配置为定时任务,spring会自动发现该任务>>每分钟执行一次 cron表达式 https://cron.qqe2.com/
     @Override
     public void dailyCalculate() {
         logger.info("quartz is running !");

@@ -1,7 +1,6 @@
 package com.ike.o2o.config.quartz;
 
 import com.ike.o2o.service.ProductSellDailyService;
-import com.ike.o2o.service.impl.ProductSellDailyServiceImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +22,10 @@ public class QuartzConfigAssist {
     @Value("${quartz.cron}")
     private String cron;
 
+    /**
+     * 定时任务对象
+     * @param productSellDailyService productSellDailyService
+     */
     @Autowired
     public QuartzConfigAssist(ProductSellDailyService productSellDailyService) {
         this.productSellDailyService = productSellDailyService;
