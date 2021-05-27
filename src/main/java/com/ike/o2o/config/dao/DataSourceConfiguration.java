@@ -3,6 +3,7 @@ package com.ike.o2o.config.dao;
 import com.ike.o2o.dao.split.DynamicDataSourceHolder;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;

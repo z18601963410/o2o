@@ -13,6 +13,7 @@ import com.ike.o2o.service.AreaService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,8 +24,15 @@ import java.util.List;
 
 @Service
 public class AreaServiceImpl implements AreaService {
-    @Autowired
+
+    @Qualifier
     private AreaDao areaDao;
+
+    @Autowired
+    public AreaServiceImpl(AreaDao areaDao) {
+        this.areaDao = areaDao;
+    }
+
     // redis 数据类型为key的工具类,该对象负责与redis服务器通信,完成数据交换工作
     @Autowired
     private JedisUtil.Keys jedisKeys;
